@@ -1,7 +1,8 @@
-#include "Elemento.hpp"
-#include "ListaEnc.hpp"
+#include <iostream>
+#include <gtkmm.h>
 
 int main()
 {
+    std::cout << "hellow" << std::endl;
     return 0;
 }
