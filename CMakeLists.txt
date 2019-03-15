@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.7.2)
 
 project(cool_gl VERSION 0.0.1)
 
+set(CMAKE_CXX_STANDARD 11)
+
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
 link_directories(${GTKMM_LIBRARY_DIRS})
