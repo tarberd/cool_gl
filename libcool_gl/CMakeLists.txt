@@ -1,4 +1,4 @@
-add_library(cool_gl src/hello.cpp)
+add_library(cool_gl src/cool_gl.cpp)
 
 target_include_directories(cool_gl PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
