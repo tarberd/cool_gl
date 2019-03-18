@@ -6,13 +6,51 @@
     <property name="name">cool_main_gtk_window</property>
     <property name="can_focus">False</property>
     <child>
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkDrawingArea" id="cool_main_gtk_drawing_area_id">
-        <property name="name">cool_main_gtk_drawing_area</property>
+      <object class="GtkPaned">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can_focus">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkButton" id="glade_button_1_id">
+                <property name="label" translatable="yes">button</property>
+                <property name="name">glade_button_1</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">False</property>
+            <property name="shrink">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkDrawingArea" id="cool_main_gtk_drawing_area_id">
+            <property name="name">cool_main_gtk_drawing_area</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">True</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>

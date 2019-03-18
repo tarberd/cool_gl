@@ -16,6 +16,8 @@ bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   return true;
 }
 
+void button_callback() { std::cout << "OUCH! STOP THAT!" << std::endl; }
+
 int main(int argc, char **argv) {
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
@@ -40,8 +42,20 @@ int main(int argc, char **argv) {
 
   if (glade_window == nullptr) {
     throw std::runtime_error(
-        "builder could not find: cool_main_gtk_window widget");
+        "builder could not find: cool_main_gtk_window_id widget");
   }
+
+  Gtk::Button *button;
+
+
+  builder->get_widget("glade_button_1_id", button);
+
+  if (glade_window == nullptr) {
+    throw std::runtime_error(
+        "builder could not find: glade_button_1_id widget");
+  }
+
+  button->signal_clicked().connect(sigc::ptr_fun(button_callback));
 
   Gtk::DrawingArea *glade_drawing_area;
 
