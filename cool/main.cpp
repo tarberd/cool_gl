@@ -2,39 +2,61 @@
 #include <gtkmm.h>
 #include <iostream>
 
-class Drawing : public Gtk::DrawingArea {
-protected:
-  // Override default signal handler:
-  bool on_draw(const Cairo::RefPtr<Cairo::Context> &cr) final {
-    Gtk::Allocation allocation = get_allocation();
-    const int width = allocation.get_width();
-    const int height = allocation.get_height();
+bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
+  const int width = 600;
+  const int height = 800;
 
-    auto line = cool_gl::Line{
-        cool_gl::Point{0.0, 0.0},
-        cool_gl::Point{static_cast<double>(width), static_cast<double>(height)},
-        cool_gl::Colour{0.8, 0.0, 0.0}};
+  auto line = cool_gl::Line{
+      cool_gl::Point{0.0, 0.0},
+      cool_gl::Point{static_cast<double>(width), static_cast<double>(height)},
+      cool_gl::Colour{0.8, 0.0, 0.0}};
 
-    line.draw(cr);
+  line.draw(cr);
 
-    return true;
-  }
-};
+  return true;
+}
 
 int main(int argc, char **argv) {
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
-  Gtk::Window window;
+  auto builder = Gtk::Builder::create();
 
-  // Create the drawing
-  Drawing dwg;
+  try {
+    builder->add_from_file("cool_glade.glade");
+  } catch (const Glib::FileError &ex) {
+    std::cerr << "FileError: " << ex.what() << std::endl;
+    return 1;
+  } catch (const Glib::MarkupError &ex) {
+    std::cerr << "MarkupError: " << ex.what() << std::endl;
+    return 1;
+  } catch (const Gtk::BuilderError &ex) {
+    std::cerr << "BuilderError: " << ex.what() << std::endl;
+    return 1;
+  }
 
-  // Insert the drawing in the window
-  window.add(dwg);
+  Gtk::Window *glade_window;
 
-  // Show the drawing
-  dwg.show();
+  builder->get_widget("cool_main_gtk_window_id", glade_window);
 
-  // Start main loop
-  return app->run(window);
+  if (glade_window == nullptr) {
+    throw std::runtime_error(
+        "builder could not find: cool_main_gtk_window widget");
+  }
+
+  Gtk::DrawingArea *glade_drawing_area;
+
+  builder->get_widget("cool_main_gtk_drawing_area_id", glade_drawing_area);
+
+  if (glade_drawing_area == nullptr) {
+    throw std::runtime_error(
+        "builder could not find: cool_main_gtk_drawing_area_id widget");
+  }
+
+  glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
+
+  glade_drawing_area->show();
+
+  auto result = app->run(*glade_window);
+
+  return result;
 }
