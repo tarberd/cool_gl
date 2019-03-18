@@ -1,4 +1,4 @@
-add_executable(cool main.cpp)
+add_executable(cool main.cpp main_window.cpp)
 
 target_link_libraries(cool ${GTKMM_LIBRARIES} cool_gl)
 

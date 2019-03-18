@@ -1,31 +1,6 @@
 #include <iostream>
 #include <gtkmm.h>
-
-class Drawing : public Gtk::DrawingArea
-{
-protected:
-	//Override default signal handler:
-	virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-    {
-        // Draw the first circle
-        cr->arc(75,75,50,0,2*M_PI);
-        cr->set_source_rgba(0, 0, 1.0,0.5);
-        cr->fill();
-        cr->stroke();
-
-        cr->set_source_rgba(0, 1, 0,0.5);
-        cr->arc(100,125,50,0,2*M_PI);
-        cr->fill();
-        cr->stroke();
-
-        cr->set_source_rgba(1, 0, 0,0.5);
-        cr->arc(125,75,50,0,2*M_PI);
-        cr->fill();
-        cr->stroke();
-
-        return true;
-    }
-};
+#include "main_window.h"
 
 int main(int argc, char** argv)
 {
@@ -78,17 +53,30 @@ int main(int argc, char** argv)
 
     // Initialize gtkmm and create the main window
 	//Glib::RefPtr app = Gtk::Application::create(argc, argv, "www.lucidarme.me");
-	Gtk::Window window;
+	MainWindow window;
 
-	// Create the drawing
-	Drawing dwg;
 
-	// Insert the drawing in the window
-	window.add(dwg);
+ //    window.set_title("Cool GL");
+ //    window.set_size_request(800, 600);
 
-	// Show the drawing
-	dwg.show();
+ //      /* Sets the border width of the window. */
+ //    window.set_border_width(10);
 
+ //    window.add(m_box1);
+ //    window.add(m_box2);
+
+	// // Create the drawing
+	// Drawing dwg;
+
+ //    Gtk::Button m_button("Hello World");
+	// // Insert the drawing in the window
+	// m_box1.add(dwg);
+ //    m_box2.add(m_button);
+
+ //    // dwg.show();
+ //    // m_button.show();
+
+ //    window.show_all_children();
 	// Start main loop
 	return app->run(window);
 }
