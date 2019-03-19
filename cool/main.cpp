@@ -9,20 +9,36 @@ double zoom = 0.001;
 double tx = 1.0;
 double ty = 1.0;
 
+cool_gl::Vec3 view_port_begin;
+cool_gl::Vec3 view_port_end;
+
 Gtk::Window *glade_window;
 
 Gtk::DrawingArea *glade_drawing_area;
 
-
 bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
-  const int width = 600;
-  const int height = 800;
-  glade_drawing_area->set_size_request(800, 600);
+  // Gtk::Allocation allocation = glade_drawing_area->get_allocation();
+  // const int width = allocation.get_width();
+  // const int height = allocation.get_height();
 
-  auto line = cool_gl::Line{
-      cool_gl::Point{1.0, 1.0},
-      cool_gl::Point{static_cast<double>(width), static_cast<double>(height)},
-      cool_gl::Colour{0.8, 0.0, 0.0}};
+  const int width = glade_drawing_area->get_width();
+  const int height = glade_drawing_area->get_height();
+
+  std::cout << width << " " << height << std::endl;
+
+  using cool_gl::Vec3;
+
+  Vec3 window_begin = {0.0, 0.0, 1};
+  Vec3 window_end = {static_cast<double>(width), static_cast<double>(height),
+                     1};
+
+  Vec3 view_port_begin = window_begin;
+  Vec3 view_port_end = window_begin;
+
+  auto line = cool_gl::Line{cool_gl::Vec3{1.0, 1.0, 1.0},
+                            cool_gl::Vec3{static_cast<double>(width),
+                                          static_cast<double>(height), 1.0},
+                            cool_gl::Colour{0.8, 0.0, 0.0}};
 
   cr->scale(width*zoom, height*zoom);
   cr->translate(tx, ty);
@@ -131,6 +147,8 @@ int main(int argc, char **argv) {
     throw std::runtime_error(
         "builder could not find: cool_main_gtk_drawing_area_id widget");
   }
+
+  glade_drawing_area->set_size_request(800, 600);
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
 

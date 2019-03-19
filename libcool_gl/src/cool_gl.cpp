@@ -11,4 +11,6 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr) const {
   cr->stroke();
 }
 
+Drawable_type Line::type() const noexcept { return Drawable_type::line; }
+
 } // namespace cool_gl

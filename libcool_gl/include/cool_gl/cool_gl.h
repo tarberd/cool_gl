@@ -4,9 +4,18 @@
 
 namespace cool_gl {
 
+struct Vec3 {
+  double x;
+  double y;
+  double z;
+};
+
+enum class Drawable_type : int { point, line };
+
 struct Drawable {
 public:
   virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr) const = 0;
+  virtual Drawable_type type() const noexcept = 0;
 };
 
 struct Colour {
@@ -15,14 +24,9 @@ struct Colour {
   double b;
 };
 
-struct Point {
-  double x;
-  double y;
-};
-
 struct Line : public Drawable {
-  Point begin;
-  Point end;
+  Vec3 begin;
+  Vec3 end;
 
   Colour colour;
 
@@ -36,6 +40,8 @@ struct Line : public Drawable {
         colour{std::forward<C>(colour)} {}
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr) const final;
+
+  Drawable_type type() const noexcept final;
 };
 
 } // namespace cool_gl
