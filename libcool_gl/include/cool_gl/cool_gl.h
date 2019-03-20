@@ -14,7 +14,7 @@ enum class Drawable_type : int { point, line };
 
 struct Drawable {
 public:
-  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr) const = 0;
+  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const = 0;
   virtual Drawable_type type() const noexcept = 0;
 };
 
@@ -39,7 +39,7 @@ struct Line : public Drawable {
       : begin{std::forward<A>(begin)}, end{std::forward<B>(end)},
         colour{std::forward<C>(colour)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
 
   Drawable_type type() const noexcept final;
 };

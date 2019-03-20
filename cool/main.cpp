@@ -2,15 +2,11 @@
 #include <gtkmm.h>
 #include <iostream>
 
-const double ZOOM_FACTOR = 0.8;
-const double MOVE_FACTOR = 1;
+const double ZOOM_FACTOR = 1.0;
+const double MOVE_FACTOR = 1.0;
 
-double zoom = 0.001;
-double tx = 1.0;
-double ty = 1.0;
-
-cool_gl::Vec3 view_port_begin;
-cool_gl::Vec3 view_port_end;
+cool_gl::Vec3 window_begin = {0.0, 0.0, 1.0};
+cool_gl::Vec3 window_end = {40.0, 40.0, 1.0};
 
 Gtk::Window *glade_window;
 
@@ -28,61 +24,69 @@ bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
 
   using cool_gl::Vec3;
 
-  Vec3 window_begin = {0.0, 0.0, 1};
-  Vec3 window_end = {static_cast<double>(width), static_cast<double>(height),
+  Vec3 viewport_begin = {0.0, 0.0, 1.0};
+  Vec3 viewport_end = {static_cast<double>(width), static_cast<double>(height),
                      1};
 
-  Vec3 view_port_begin = window_begin;
-  Vec3 view_port_end = window_begin;
+  auto line = cool_gl::Line{cool_gl::Vec3{0.0, 0.0, 1.0},
+                            cool_gl::Vec3{40.0, 40.0, 1.0},
+                            cool_gl::Colour{0.0, 0.0, 0.0}};
 
-  auto line = cool_gl::Line{cool_gl::Vec3{1.0, 1.0, 1.0},
-                            cool_gl::Vec3{static_cast<double>(width),
-                                          static_cast<double>(height), 1.0},
-                            cool_gl::Colour{0.8, 0.0, 0.0}};
-
-  cr->scale(width*zoom, height*zoom);
-  cr->translate(tx, ty);
-  line.draw(cr);
+  line.draw(cr, window_begin, window_end, viewport_begin, viewport_end);
 
   return true;
 }
 
 void move_down(){
-  ty += MOVE_FACTOR;
+  window_begin.y -= MOVE_FACTOR;
+  window_end.y -= MOVE_FACTOR;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void move_up(){
-  ty -= MOVE_FACTOR;
+  window_begin.y += MOVE_FACTOR;
+  window_end.y += MOVE_FACTOR;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void move_right(){
-  tx += MOVE_FACTOR;
+  window_begin.x += MOVE_FACTOR;
+  window_end.x += MOVE_FACTOR;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void move_left(){
-  tx -= 1;
+  window_begin.x -= MOVE_FACTOR;
+  window_end.x -= MOVE_FACTOR;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void out_callback() {
-  zoom *= ZOOM_FACTOR;
+  window_begin.x -= ZOOM_FACTOR;
+  window_begin.y -= ZOOM_FACTOR;
+
+  window_end.x += ZOOM_FACTOR;
+  window_end.y += ZOOM_FACTOR;
+
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void in_callback() {
-  zoom /= ZOOM_FACTOR;
+  window_begin.x += ZOOM_FACTOR;
+  window_begin.y += ZOOM_FACTOR;
+
+  window_end.x -= ZOOM_FACTOR;
+  window_end.y -= ZOOM_FACTOR;
+
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
@@ -112,6 +116,7 @@ int main(int argc, char **argv) {
     throw std::runtime_error(
         "builder could not find: cool_main_gtk_window_id widget");
   }
+
   glade_window->set_default_size(800, 600);
 
   Gtk::Button *zoom_out;
@@ -148,7 +153,7 @@ int main(int argc, char **argv) {
         "builder could not find: cool_main_gtk_drawing_area_id widget");
   }
 
-  glade_drawing_area->set_size_request(800, 600);
+  glade_drawing_area->set_size_request(600, 600);
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
 
