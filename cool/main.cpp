@@ -1,6 +1,9 @@
 #include <cool_gl/cool_gl.h>
 #include <gtkmm.h>
 #include <iostream>
+#include <vector>
+#include <memory>
+#include "model_columns.h"
 
 const double ZOOM_FACTOR = 1.0;
 const double MOVE_FACTOR = 1.0;
@@ -16,16 +19,14 @@ Gtk::DrawingArea *glade_drawing_area;
 
 Gtk::Entry *zoom;
 
+std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
+
+Gtk::TreeView *object_tree;
+Glib::RefPtr<Gtk::ListStore> object_list;
 
 bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
-  // Gtk::Allocation allocation = glade_drawing_area->get_allocation();
-  // const int width = allocation.get_width();
-  // const int height = allocation.get_height();
-
   const int width = glade_drawing_area->get_width();
   const int height = glade_drawing_area->get_height();
-
-  std::cout << width << " " << height << std::endl;
 
   using cool_gl::Vec3;
 
@@ -33,11 +34,9 @@ bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   Vec3 viewport_end = {static_cast<double>(width), static_cast<double>(height),
                      1};
 
-  auto line = cool_gl::Line{cool_gl::Vec3{0.0, 0.0, 1.0},
-                            cool_gl::Vec3{40.0, 40.0, 1.0},
-                            cool_gl::Colour{0.0, 0.0, 0.0}};
-
-  line.draw(cr, window_begin, window_end, viewport_begin, viewport_end);
+  for(const auto & drawable : drawable_vector){
+      drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
+  }
 
   return true;
 }
@@ -104,6 +103,31 @@ void zoom_value(){
 
 
 int main(int argc, char **argv) {
+    drawable_vector.emplace_back(
+            new cool_gl::Line{
+                cool_gl::Vec3{0.0, 0.0, 1.0},
+                cool_gl::Vec3{40.0, 40.0, 1.0},
+                cool_gl::Colour{0.0, 0.0, 0.0}, "line 1"});
+
+    drawable_vector.emplace_back(
+            new cool_gl::Line{
+                cool_gl::Vec3{40.0, 0.0, 1.0},
+                cool_gl::Vec3{0.0, 40.0, 1.0},
+                cool_gl::Colour{0.8, 0.0, 0.0}, "line 2"});
+
+    drawable_vector.emplace_back(
+            new cool_gl::Point{
+                cool_gl::Vec3{12.0,20.0,1.0},
+                cool_gl::Colour{0.2, 0.7, 0.4}, "banana"});
+
+    using cool_gl::Vec3;
+
+    drawable_vector.emplace_back(
+            new cool_gl::Polygon{
+                std::vector<Vec3>{Vec3{2.0, 2.0, 1.0}, Vec3{2.0, 38.0, 1.0}, Vec3{38.0, 38.0, 1.0}, Vec3{38.0, 2.0, 1.0}},
+                cool_gl::Colour{0.7,0.2,0.4}, "coisa feia"});
+
+
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
   auto builder = Gtk::Builder::create();
@@ -146,7 +170,7 @@ int main(int argc, char **argv) {
   builder->get_widget("left", left);
 
   builder->get_widget("zoom_factor_input", zoom);
-
+  builder->get_widget("tree_view_id", object_tree);
 
   if (glade_window == nullptr) {
     throw std::runtime_error(
@@ -161,6 +185,7 @@ int main(int argc, char **argv) {
   up->signal_clicked().connect(sigc::ptr_fun(move_up));
 
   zoom->signal_changed().connect(sigc::ptr_fun(zoom_value));
+  zoom->set_text("1");
 
   builder->get_widget("cool_main_gtk_drawing_area_id", glade_drawing_area);
 
@@ -168,6 +193,16 @@ int main(int argc, char **argv) {
     throw std::runtime_error(
         "builder could not find: cool_main_gtk_drawing_area_id widget");
   }
+
+  object_list = Gtk::ListStore::create(m_Columns);
+
+  for(const auto & drawable : drawable_vector) {
+    auto row = *object_list->append();
+    row[m_Columns.m_col_text] = drawable->name();
+  }
+
+  object_tree->set_model(object_list);
+  object_tree->append_column("Nome", m_Columns.m_col_text);
 
   glade_drawing_area->set_size_request(600, 600);
 
