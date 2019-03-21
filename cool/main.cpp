@@ -101,6 +101,19 @@ int main(int argc, char **argv) {
                 cool_gl::Vec3{0.0, 40.0, 1.0},
                 cool_gl::Colour{0.8, 0.0, 0.0}});
 
+    drawable_vector.emplace_back(
+            new cool_gl::Point{
+                cool_gl::Vec3{12.0,20.0,1.0},
+                cool_gl::Colour{0.2, 0.7, 0.4}});
+
+    using cool_gl::Vec3;
+
+    drawable_vector.emplace_back(
+            new cool_gl::Polygon{
+                std::vector<Vec3>{Vec3{2.0, 2.0, 1.0}, Vec3{2.0, 38.0, 1.0}, Vec3{38.0, 38.0, 1.0}, Vec3{38.0, 2.0, 1.0}},
+                cool_gl::Colour{0.7,0.2,0.4}});
+
+
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
   auto builder = Gtk::Builder::create();
