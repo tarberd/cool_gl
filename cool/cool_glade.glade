@@ -37,14 +37,14 @@
                 <property name="can_focus">False</property>
                 <property name="margin_left">14</property>
                 <property name="row_spacing">4</property>
+                <property name="row_homogeneous">True</property>
+                <property name="column_homogeneous">True</property>
                 <child>
                   <object class="GtkButton" id="zoom_in_button">
                     <property name="label" translatable="yes">+</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
                     <property name="margin_left">11</property>
                   </object>
                   <packing>
@@ -58,8 +58,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
                     <property name="margin_right">20</property>
                   </object>
                   <packing>
@@ -115,6 +113,8 @@
               <object class="GtkGrid" id="grid2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="row_homogeneous">True</property>
+                <property name="column_homogeneous">True</property>
                 <child>
                   <object class="GtkButton" id="down">
                     <property name="label" translatable="yes">\/</property>
@@ -180,20 +180,7 @@
               <object class="GtkGrid" id="grid3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkTreeView" id="tree_view_id">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="margin_top">38</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="object_store_1"/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
+                <property name="column_homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="lable3">
                     <property name="visible">True</property>
@@ -203,6 +190,33 @@
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="add_button_id">
+                    <property name="label" translatable="yes">Add Object</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTreeView" id="tree_view_id">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="tree_selection_id"/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
               </object>
