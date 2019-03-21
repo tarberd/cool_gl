@@ -1,6 +1,8 @@
 #include <cool_gl/cool_gl.h>
 #include <gtkmm.h>
 #include <iostream>
+#include <vector>
+#include <memory>
 
 const double ZOOM_FACTOR = 1.0;
 const double MOVE_FACTOR = 1.0;
@@ -12,15 +14,12 @@ Gtk::Window *glade_window;
 
 Gtk::DrawingArea *glade_drawing_area;
 
-bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
-  // Gtk::Allocation allocation = glade_drawing_area->get_allocation();
-  // const int width = allocation.get_width();
-  // const int height = allocation.get_height();
+std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
 
+
+bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   const int width = glade_drawing_area->get_width();
   const int height = glade_drawing_area->get_height();
-
-  std::cout << width << " " << height << std::endl;
 
   using cool_gl::Vec3;
 
@@ -28,11 +27,9 @@ bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   Vec3 viewport_end = {static_cast<double>(width), static_cast<double>(height),
                      1};
 
-  auto line = cool_gl::Line{cool_gl::Vec3{0.0, 0.0, 1.0},
-                            cool_gl::Vec3{40.0, 40.0, 1.0},
-                            cool_gl::Colour{0.0, 0.0, 0.0}};
-
-  line.draw(cr, window_begin, window_end, viewport_begin, viewport_end);
+  for(const auto & drawable : drawable_vector){
+      drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
+  }
 
   return true;
 }
@@ -92,6 +89,18 @@ void in_callback() {
 }
 
 int main(int argc, char **argv) {
+    drawable_vector.emplace_back(
+            new cool_gl::Line{
+                cool_gl::Vec3{0.0, 0.0, 1.0},
+                cool_gl::Vec3{40.0, 40.0, 1.0},
+                cool_gl::Colour{0.0, 0.0, 0.0}});
+
+    drawable_vector.emplace_back(
+            new cool_gl::Line{
+                cool_gl::Vec3{40.0, 0.0, 1.0},
+                cool_gl::Vec3{0.0, 40.0, 1.0},
+                cool_gl::Colour{0.8, 0.0, 0.0}});
+
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
   auto builder = Gtk::Builder::create();
