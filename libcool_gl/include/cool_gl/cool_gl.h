@@ -26,12 +26,10 @@ struct Colour {
   Colour(double r, double g, double b) : r{r}, g{g}, b{b} {}
 };
 
-enum class Drawable_type : int { point, line, polygon};
-
 struct Drawable {
   virtual ~Drawable();
   virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const = 0;
-  virtual Drawable_type type() const noexcept = 0;
+  virtual std::string type() const noexcept = 0;
   virtual const std::string &name() const noexcept = 0;
   virtual std::string &name() noexcept = 0;
 };
@@ -52,9 +50,9 @@ struct Point : public Drawable {
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
 
-  Drawable_type type() const noexcept final;
+  std::string type() const noexcept final;
 
-  const std::string & name() const noexcept final;
+  const std::string &name() const noexcept final;
   std::string & name() noexcept final;
 };
 
@@ -77,10 +75,10 @@ struct Line : public Drawable {
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
 
-  Drawable_type type() const noexcept final;
+  std::string type() const noexcept final;
 
-  const std::string & name() const noexcept final;
-  std::string & name() noexcept final;
+  const std::string &name() const noexcept final;
+  std::string &name() noexcept final;
 };
 
 struct Polygon : public Drawable {
@@ -101,7 +99,7 @@ struct Polygon : public Drawable {
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
 
-  Drawable_type type() const noexcept final;
+  std::string type() const noexcept final;
 
   const std::string & name() const noexcept final;
   std::string & name() noexcept final;

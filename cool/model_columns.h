@@ -1,12 +1,13 @@
+#pragma once
+
 class ModelColumns : public Gtk::TreeModelColumnRecord
 {
 public:
+  ModelColumns() {
+    add(column_type);
+    add(column_name);
+  }
 
-  ModelColumns()
-    { add(m_col_text); add(m_col_number); }
-
-  Gtk::TreeModelColumn<Glib::ustring> m_col_text;
-  Gtk::TreeModelColumn<int> m_col_number;
+  Gtk::TreeModelColumn<std::string> column_type;
+  Gtk::TreeModelColumn<std::string> column_name;
 };
-
-ModelColumns m_Columns;

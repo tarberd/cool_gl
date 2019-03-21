@@ -22,7 +22,7 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 w
   cr->stroke();
 }
 
-Drawable_type Line::type() const noexcept { return Drawable_type::line; }
+std::string Line::type() const noexcept { return "Line"; }
 
 const std::string & Line::name() const noexcept {
     return m_name;
@@ -46,15 +46,11 @@ void Point::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 
   cr->fill();
 }
 
-Drawable_type Point::type() const noexcept { return Drawable_type::point; }
+std::string Point::type() const noexcept { return "Point"; }
 
-const std::string & Point::name() const noexcept {
-    return m_name;
-}
+const std::string &Point::name() const noexcept { return m_name; }
 
-std::string & Point::name() noexcept {
-    return m_name;
-}
+std::string &Point::name() noexcept { return m_name; }
 
 void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const {
   cr->set_line_width(10.0);
@@ -78,14 +74,10 @@ void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec
   }
 }
 
-Drawable_type Polygon::type() const noexcept { return Drawable_type::polygon; }
+std::string Polygon::type() const noexcept { return "Polygon"; }
 
-const std::string & Polygon::name() const noexcept {
-    return m_name;
-}
+const std::string &Polygon::name() const noexcept { return m_name; }
 
-std::string & Polygon::name() noexcept {
-    return m_name;
-}
+std::string &Polygon::name() noexcept { return m_name; }
 
 } // namespace cool_gl

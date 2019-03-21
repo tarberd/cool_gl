@@ -21,6 +21,7 @@ Gtk::Entry *zoom;
 
 std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
 
+ModelColumns my_columns;
 Gtk::TreeView *object_tree;
 Glib::RefPtr<Gtk::ListStore> object_list;
 
@@ -194,15 +195,17 @@ int main(int argc, char **argv) {
         "builder could not find: cool_main_gtk_drawing_area_id widget");
   }
 
-  object_list = Gtk::ListStore::create(m_Columns);
+  object_list = Gtk::ListStore::create(my_columns);
 
   for(const auto & drawable : drawable_vector) {
     auto row = *object_list->append();
-    row[m_Columns.m_col_text] = drawable->name();
+    row[my_columns.column_type] = drawable->type();
+    row[my_columns.column_name] = drawable->name();
   }
 
   object_tree->set_model(object_list);
-  object_tree->append_column("Nome", m_Columns.m_col_text);
+  object_tree->append_column("Type", my_columns.column_type);
+  object_tree->append_column("Nome", my_columns.column_name);
 
   glade_drawing_area->set_size_request(600, 600);
 
