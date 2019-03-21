@@ -5,12 +5,17 @@
 const double ZOOM_FACTOR = 1.0;
 const double MOVE_FACTOR = 1.0;
 
+int zoom_factor = 0;
+
 cool_gl::Vec3 window_begin = {0.0, 0.0, 1.0};
 cool_gl::Vec3 window_end = {40.0, 40.0, 1.0};
 
 Gtk::Window *glade_window;
 
 Gtk::DrawingArea *glade_drawing_area;
+
+Gtk::Entry *zoom;
+
 
 bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   // Gtk::Allocation allocation = glade_drawing_area->get_allocation();
@@ -70,26 +75,33 @@ void move_left(){
 }
 
 void out_callback() {
-  window_begin.x -= ZOOM_FACTOR;
-  window_begin.y -= ZOOM_FACTOR;
+  window_begin.x -= zoom_factor;
+  window_begin.y -= zoom_factor;
 
-  window_end.x += ZOOM_FACTOR;
-  window_end.y += ZOOM_FACTOR;
+  window_end.x += zoom_factor;
+  window_end.y += zoom_factor;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
 
 void in_callback() {
-  window_begin.x += ZOOM_FACTOR;
-  window_begin.y += ZOOM_FACTOR;
+  window_begin.x += zoom_factor;
+  window_begin.y += zoom_factor;
 
-  window_end.x -= ZOOM_FACTOR;
-  window_end.y -= ZOOM_FACTOR;
+  window_end.x -= zoom_factor;
+  window_end.y -= zoom_factor;
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
   glade_drawing_area->queue_draw();
 }
+
+void zoom_value(){
+  const char *c = zoom->get_text().c_str();
+
+  zoom_factor = atol(c);
+}
+
 
 int main(int argc, char **argv) {
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
@@ -133,6 +145,8 @@ int main(int argc, char **argv) {
   builder->get_widget("right", right);
   builder->get_widget("left", left);
 
+  builder->get_widget("zoom_factor_input", zoom);
+
 
   if (glade_window == nullptr) {
     throw std::runtime_error(
@@ -145,6 +159,8 @@ int main(int argc, char **argv) {
   right->signal_clicked().connect(sigc::ptr_fun(move_right));
   left->signal_clicked().connect(sigc::ptr_fun(move_left));
   up->signal_clicked().connect(sigc::ptr_fun(move_up));
+
+  zoom->signal_changed().connect(sigc::ptr_fun(zoom_value));
 
   builder->get_widget("cool_main_gtk_drawing_area_id", glade_drawing_area);
 
