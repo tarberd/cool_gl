@@ -1,1 +1,4 @@
 build
+vpl/*.cpp
+vpl/*.h
+vpl/*.glade

@@ -117,7 +117,8 @@ void show_add_drawable_dialog() { dialog_add_drawable->show(); }
 void create_drawable_from_entry() {
   std::cout << create_drawable_entrie_string << std::endl;
 
-  auto entrie_stream = std::stringstream{create_drawable_entrie_string};
+  std::stringstream entrie_stream;
+  entrie_stream << create_drawable_entrie_string;
 
   std::string current_string;
 
