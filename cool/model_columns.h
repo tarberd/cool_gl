@@ -1,5 +1,7 @@
 #pragma once
 
+#include <gtkmm.h>
+
 class ModelColumns : public Gtk::TreeModelColumnRecord
 {
 public:
