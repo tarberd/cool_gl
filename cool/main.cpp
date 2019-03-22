@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
   builder->get_widget("entry_add_drawable_dialog_id",
                       add_drawable_comand_entry);
 
+  add_drawable_comand_entry->set_max_length(150);
   add_drawable_comand_entry->signal_changed().connect(
       sigc::ptr_fun(create_drawable_entry_value));
 
