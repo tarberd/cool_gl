@@ -124,23 +124,66 @@ void create_drawable_from_entry() {
 
   entrie_stream >> current_string;
 
-  std::cout << current_string << std::endl;
-
   if (current_string == "point") {
     std::string name;
     std::string x_string;
     std::string y_string;
 
-    entrie_stream >> name;
-    entrie_stream >> x_string;
-    entrie_stream >> y_string;
-
-    std::cout << name << x_string << y_string << std::endl;
+    entrie_stream >> name >> x_string >> y_string;
 
     auto position =
         cool_gl::Vec3{std::stod(x_string), std::stod(y_string), 1.0};
     drawable_vector.emplace_back(
         new cool_gl::Point{position, cool_gl::Colour{0.0, 0.0, 0.0}, name});
+
+    auto row = *object_list->append();
+    row[my_columns.column_type] = drawable_vector.back()->type();
+    row[my_columns.column_name] = drawable_vector.back()->name();
+  }
+  if (current_string == "line") {
+    std::string name;
+
+    std::string x_begin_string;
+    std::string y_begin_string;
+
+    std::string x_end_string;
+    std::string y_end_string;
+
+    entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
+        y_end_string;
+
+    auto begin = cool_gl::Vec3{std::stod(x_begin_string),
+                               std::stod(y_begin_string), 1.0};
+    auto end =
+        cool_gl::Vec3{std::stod(x_end_string), std::stod(y_end_string), 1.0};
+
+    drawable_vector.emplace_back(
+        new cool_gl::Line{begin, end, cool_gl::Colour{0.0, 0.0, 0.0}, name});
+
+    auto row = *object_list->append();
+    row[my_columns.column_type] = drawable_vector.back()->type();
+    row[my_columns.column_name] = drawable_vector.back()->name();
+  }
+  if (current_string == "polygon") {
+    std::string name;
+
+    std::vector<cool_gl::Vec3> points;
+
+    std::string x_string;
+    std::string y_string;
+
+    entrie_stream >> name;
+    while (entrie_stream >> x_string >> y_string) {
+
+      points.emplace_back(std::stod(x_string), std::stod(y_string), 1.0);
+    }
+
+    drawable_vector.emplace_back(new cool_gl::Polygon{
+        std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, name});
+
+    auto row = *object_list->append();
+    row[my_columns.column_type] = drawable_vector.back()->type();
+    row[my_columns.column_name] = drawable_vector.back()->name();
   }
 
   glade_drawing_area->signal_draw().connect(sigc::ptr_fun(draw_callback));
@@ -227,7 +270,7 @@ int main(int argc, char **argv) {
   builder->get_widget("entry_add_drawable_dialog_id",
                       add_drawable_comand_entry);
 
-  add_drawable_comand_entry->set_max_length(150);
+  add_drawable_comand_entry->get_buffer()->set_max_length(50);
   add_drawable_comand_entry->signal_changed().connect(
       sigc::ptr_fun(create_drawable_entry_value));
 
