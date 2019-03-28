@@ -71,10 +71,10 @@ bool CoolApp::draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   const double width = static_cast<double>(cool_drawing_area->get_width());
   const double height = static_cast<double>(cool_drawing_area->get_height());
 
-  using cool_gl::Vec3;
+  using cool_gl::Vec;
 
-  Vec3 viewport_begin = {0.0, 0.0, 1.0};
-  Vec3 viewport_end = {width, height, 1.0};
+  Vec viewport_begin = {0.0, 0.0, 1.0};
+  Vec viewport_end = {width, height, 1.0};
 
   for (const auto &drawable : drawable_vector) {
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
@@ -184,8 +184,7 @@ void CoolApp::create_drawable_from_entry() {
 
     entrie_stream >> name >> x_string >> y_string;
 
-    auto position =
-        cool_gl::Vec3{std::stod(x_string), std::stod(y_string), 1.0};
+    auto position = cool_gl::Vec{std::stod(x_string), std::stod(y_string), 1.0};
     drawable_vector.emplace_back(
         new cool_gl::Point{position, cool_gl::Colour{0.0, 0.0, 0.0}, name});
 
@@ -205,10 +204,10 @@ void CoolApp::create_drawable_from_entry() {
     entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
         y_end_string;
 
-    auto begin = cool_gl::Vec3{std::stod(x_begin_string),
-                               std::stod(y_begin_string), 1.0};
+    auto begin =
+        cool_gl::Vec{std::stod(x_begin_string), std::stod(y_begin_string), 1.0};
     auto end =
-        cool_gl::Vec3{std::stod(x_end_string), std::stod(y_end_string), 1.0};
+        cool_gl::Vec{std::stod(x_end_string), std::stod(y_end_string), 1.0};
 
     drawable_vector.emplace_back(
         new cool_gl::Line{begin, end, cool_gl::Colour{0.0, 0.0, 0.0}, name});
@@ -220,7 +219,7 @@ void CoolApp::create_drawable_from_entry() {
   if (current_string == "polygon") {
     std::string name;
 
-    std::vector<cool_gl::Vec3> points;
+    std::vector<cool_gl::Vec> points;
 
     std::string x_string;
     std::string y_string;
