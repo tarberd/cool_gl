@@ -1,19 +1,30 @@
 #pragma once
 
+#include <array>
 #include <gtkmm.h>
 
 namespace cool_gl {
 
-struct Vec3 {
+using Matrix = std::array<std::array<double, 4>, 4>;
+
+struct Vec {
   double x;
   double y;
   double z;
+  double a;
 
-  Vec3() = default;
-  Vec3(const Vec3 &) = default;
-  Vec3(Vec3 &&) = default;
-  Vec3(double x, double y, double z) : x{x}, y{y}, z{z} {}
+  Vec() = default;
+  Vec(const Vec &) = default;
+  Vec(Vec &&) = default;
+  Vec(double x, double y, double z = 1.0, double a = 1.0)
+      : x{x}, y{y}, z{z}, a{a} {}
+
+  const double &operator[](int x) const;
+  double &operator[](int x);
 };
+
+Matrix multiply(const Matrix &left, const Matrix &right);
+Vec multiply(const Matrix &left, const Vec &right);
 
 struct Colour {
   double r{0.0};
@@ -28,14 +39,16 @@ struct Colour {
 
 struct Drawable {
   virtual ~Drawable();
-  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const = 0;
+  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
+                    Vec window_max, Vec viewport_min,
+                    Vec viewport_max) const = 0;
   virtual std::string type() const noexcept = 0;
   virtual const std::string &name() const noexcept = 0;
   virtual std::string &name() noexcept = 0;
 };
 
 struct Point : public Drawable {
-  Vec3 position;
+  Vec position;
   Colour colour;
   std::string m_name;
 
@@ -48,7 +61,8 @@ struct Point : public Drawable {
       : position{std::forward<A>(position)}, colour{std::forward<B>(colour)},
         m_name{std::forward<C>(name)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
+            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
   std::string type() const noexcept final;
 
@@ -57,8 +71,8 @@ struct Point : public Drawable {
 };
 
 struct Line : public Drawable {
-  Vec3 begin;
-  Vec3 end;
+  Vec begin;
+  Vec end;
 
   Colour colour;
 
@@ -73,7 +87,8 @@ struct Line : public Drawable {
       : begin{std::forward<A>(begin)}, end{std::forward<B>(end)},
         colour{std::forward<C>(colour)}, m_name{std::forward<D>(name)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
+            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
   std::string type() const noexcept final;
 
@@ -82,7 +97,7 @@ struct Line : public Drawable {
 };
 
 struct Polygon : public Drawable {
-  std::vector<Vec3> points;
+  std::vector<Vec> points;
 
   Colour colour;
 
@@ -97,7 +112,8 @@ struct Polygon : public Drawable {
       : points{std::forward<A>(points)}, colour{std::forward<B>(colour)},
         m_name{std::forward<C>(name)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec3 window_min, Vec3 window_max, Vec3 viewport_min, Vec3 viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
+            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
   std::string type() const noexcept final;
 

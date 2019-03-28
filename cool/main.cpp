@@ -11,8 +11,8 @@ const double MOVE_FACTOR = 1.0;
 
 int zoom_factor = 0;
 
-cool_gl::Vec3 window_begin = {0.0, 0.0, 1.0};
-cool_gl::Vec3 window_end = {40.0, 40.0, 1.0};
+cool_gl::Vec window_begin = {0.0, 0.0, 1.0};
+cool_gl::Vec window_end = {40.0, 40.0, 1.0};
 
 Gtk::Window *glade_window;
 Gtk::Dialog *dialog_add_drawable;
@@ -33,11 +33,11 @@ bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   const int width = glade_drawing_area->get_width();
   const int height = glade_drawing_area->get_height();
 
-  using cool_gl::Vec3;
+  using cool_gl::Vec;
 
-  Vec3 viewport_begin = {0.0, 0.0, 1.0};
-  Vec3 viewport_end = {static_cast<double>(width), static_cast<double>(height),
-                     1};
+  Vec viewport_begin = {0.0, 0.0, 1.0};
+  Vec viewport_end = {static_cast<double>(width), static_cast<double>(height),
+                      1};
 
   for(const auto & drawable : drawable_vector){
       drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
@@ -131,8 +131,7 @@ void create_drawable_from_entry() {
 
     entrie_stream >> name >> x_string >> y_string;
 
-    auto position =
-        cool_gl::Vec3{std::stod(x_string), std::stod(y_string), 1.0};
+    auto position = cool_gl::Vec{std::stod(x_string), std::stod(y_string), 1.0};
     drawable_vector.emplace_back(
         new cool_gl::Point{position, cool_gl::Colour{0.0, 0.0, 0.0}, name});
 
@@ -152,10 +151,10 @@ void create_drawable_from_entry() {
     entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
         y_end_string;
 
-    auto begin = cool_gl::Vec3{std::stod(x_begin_string),
-                               std::stod(y_begin_string), 1.0};
+    auto begin =
+        cool_gl::Vec{std::stod(x_begin_string), std::stod(y_begin_string), 1.0};
     auto end =
-        cool_gl::Vec3{std::stod(x_end_string), std::stod(y_end_string), 1.0};
+        cool_gl::Vec{std::stod(x_end_string), std::stod(y_end_string), 1.0};
 
     drawable_vector.emplace_back(
         new cool_gl::Line{begin, end, cool_gl::Colour{0.0, 0.0, 0.0}, name});
@@ -167,7 +166,7 @@ void create_drawable_from_entry() {
   if (current_string == "polygon") {
     std::string name;
 
-    std::vector<cool_gl::Vec3> points;
+    std::vector<cool_gl::Vec> points;
 
     std::string x_string;
     std::string y_string;
@@ -192,24 +191,22 @@ void create_drawable_from_entry() {
 
 int main(int argc, char **argv) {
   drawable_vector.emplace_back(new cool_gl::Line{
-      cool_gl::Vec3{0.0, 0.0, 1.0}, cool_gl::Vec3{40.0, 40.0, 1.0},
+      cool_gl::Vec{0.0, 0.0, 1.0}, cool_gl::Vec{40.0, 40.0, 1.0},
       cool_gl::Colour{0.0, 0.0, 0.0}, "line 1"});
 
   drawable_vector.emplace_back(new cool_gl::Line{
-      cool_gl::Vec3{40.0, 0.0, 1.0}, cool_gl::Vec3{0.0, 40.0, 1.0},
+      cool_gl::Vec{40.0, 0.0, 1.0}, cool_gl::Vec{0.0, 40.0, 1.0},
       cool_gl::Colour{0.8, 0.0, 0.0}, "line 2"});
 
-  drawable_vector.emplace_back(
-      new cool_gl::Point{cool_gl::Vec3{12.0, 20.0, 1.0},
-                         cool_gl::Colour{0.2, 0.7, 0.4}, "banana"});
+  drawable_vector.emplace_back(new cool_gl::Point{
+      cool_gl::Vec{12.0, 20.0, 1.0}, cool_gl::Colour{0.2, 0.7, 0.4}, "banana"});
 
-  using cool_gl::Vec3;
+  using cool_gl::Vec;
 
   drawable_vector.emplace_back(new cool_gl::Polygon{
-      std::vector<Vec3>{Vec3{2.0, 2.0, 1.0}, Vec3{2.0, 38.0, 1.0},
-                        Vec3{38.0, 38.0, 1.0}, Vec3{38.0, 2.0, 1.0}},
+      std::vector<Vec>{Vec{2.0, 2.0, 1.0}, Vec{2.0, 38.0, 1.0},
+                       Vec{38.0, 38.0, 1.0}, Vec{38.0, 2.0, 1.0}},
       cool_gl::Colour{0.7, 0.2, 0.4}, "coisa feia"});
-
 
   auto app = Gtk::Application::create(argc, argv, "Cool.gl");
 
