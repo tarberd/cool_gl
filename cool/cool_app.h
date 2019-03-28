@@ -35,6 +35,14 @@ struct CoolApp {
       "cool_navigation_zoom_spin_button";
   Gtk::SpinButton *cool_navigation_zoom_spin_button;
 
+  const char *cool_navigation_zoom_in_button_id =
+      "cool_navigation_zoom_in_button";
+  Gtk::Button *cool_navigation_zoom_in_button;
+
+  const char *cool_navigation_zoom_out_button_id =
+      "cool_navigation_zoom_out_button";
+  Gtk::Button *cool_navigation_zoom_out_button;
+
   const char *cool_navigation_button_left_id = "cool_navigation_button_left";
   Gtk::Button *cool_navigation_button_left;
 
@@ -64,18 +72,17 @@ struct CoolApp {
 
   CoolApp();
 
-  bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr);
-  void move_down();
-  void move_up();
-  void move_right();
-  void move_left();
-  void out_callback();
-  void in_callback();
-  void zoom_value();
-  void create_drawable_entry_value();
-  void show_add_drawable_dialog();
-  void create_drawable_from_entry();
-  int run(int argc, char **argv);
+  bool cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr);
+  void cool_navigation_button_down_clicked();
+  void cool_navigation_button_up_clicked();
+  void cool_navigation_button_right_clicked();
+  void cool_navigation_button_left_clicked();
+  void cool_navigation_zoom_out_button_clicked();
+  void cool_navigation_zoom_in_button_clicked();
+  void cool_navigation_zoom_spin_button_changed();
+  void cool_main_entry_changed();
+  void cool_main_entry_button_clicked();
+  int run();
 };
 
 } // namespace cool_app

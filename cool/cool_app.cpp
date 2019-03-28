@@ -18,6 +18,10 @@ CoolApp::CoolApp() {
                           cool_display_file_tree_view);
   gtk_builder->get_widget(cool_navigation_zoom_spin_button_id,
                           cool_navigation_zoom_spin_button);
+  gtk_builder->get_widget(cool_navigation_zoom_in_button_id,
+                          cool_navigation_zoom_in_button);
+  gtk_builder->get_widget(cool_navigation_zoom_out_button_id,
+                          cool_navigation_zoom_out_button);
   gtk_builder->get_widget(cool_navigation_button_left_id,
                           cool_navigation_button_left);
   gtk_builder->get_widget(cool_navigation_button_down_id,
@@ -27,31 +31,38 @@ CoolApp::CoolApp() {
   gtk_builder->get_widget(cool_navigation_button_right_id,
                           cool_navigation_button_right);
 
-  // set_digits int
-  //     range int int
-  //     increments int int
-  //     value int
-
   // Connect signal
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
-
   cool_main_entry->signal_changed().connect(
-      [this]() { return create_drawable_entry_value(); });
-
+      [this]() { return cool_main_entry_changed(); });
   cool_main_entry_button->signal_clicked().connect(
-      [this]() { return create_drawable_from_entry(); });
+      [this]() { return cool_main_entry_button_clicked(); });
+  cool_navigation_zoom_spin_button->signal_changed().connect(
+      [this]() { return cool_navigation_zoom_spin_button_changed(); });
+  cool_navigation_zoom_in_button->signal_clicked().connect(
+      [this]() { return cool_navigation_zoom_in_button_clicked(); });
+  cool_navigation_zoom_out_button->signal_clicked().connect(
+      [this]() { return cool_navigation_zoom_out_button_clicked(); });
+  cool_navigation_button_left->signal_clicked().connect(
+      [this]() { return cool_navigation_button_left_clicked(); });
+  cool_navigation_button_down->signal_clicked().connect(
+      [this]() { return cool_navigation_button_down_clicked(); });
+  cool_navigation_button_up->signal_clicked().connect(
+      [this]() { return cool_navigation_button_up_clicked(); });
+  cool_navigation_button_right->signal_clicked().connect(
+      [this]() { return cool_navigation_button_right_clicked(); });
 
-  cool_navigation_zoom_spin_button->signal_changed().connect([this]() { return zoom_value(); });
-
-  cool_navigation_button_left->signal_clicked().connect([this]() { return move_left(); });
-  cool_navigation_button_down->signal_clicked().connect([this]() { return move_down(); });
-  cool_navigation_button_up->signal_clicked().connect([this]() { return move_up(); });
-  cool_navigation_button_right->signal_clicked().connect([this]() { return move_right(); });
-
+  // Drawin Area
   cool_drawing_area->show();
+
+  // Spin Button
+  cool_navigation_zoom_spin_button->set_digits(3);
+  cool_navigation_zoom_spin_button->set_range(1, 100);
+  cool_navigation_zoom_spin_button->set_increments(1, 100);
+  cool_navigation_zoom_spin_button->set_value(1);
 
   object_list = Gtk::ListStore::create(my_columns);
 
@@ -62,12 +73,11 @@ CoolApp::CoolApp() {
   }
 
   cool_display_file_tree_view->set_model(object_list);
-  std::cout << "OIE" << std::endl;
   cool_display_file_tree_view->append_column("Type", my_columns.column_type);
   cool_display_file_tree_view->append_column("Nome", my_columns.column_name);
 }
 
-bool CoolApp::draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
+bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   const double width = static_cast<double>(cool_drawing_area->get_width());
   const double height = static_cast<double>(cool_drawing_area->get_height());
 
@@ -83,51 +93,51 @@ bool CoolApp::draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
   return true;
 }
 
-void CoolApp::move_down() {
+void CoolApp::cool_navigation_button_down_clicked() {
   window_begin.y -= MOVE_FACTOR;
   window_end.y -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::move_up() {
+void CoolApp::cool_navigation_button_up_clicked() {
   window_begin.y += MOVE_FACTOR;
   window_end.y += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::move_right() {
+void CoolApp::cool_navigation_button_right_clicked() {
   window_begin.x += MOVE_FACTOR;
   window_end.x += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::move_left() {
+void CoolApp::cool_navigation_button_left_clicked() {
   window_begin.x -= MOVE_FACTOR;
   window_end.x -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::out_callback() {
+void CoolApp::cool_navigation_zoom_out_button_clicked() {
   window_begin.x -= zoom_factor;
   window_begin.y -= zoom_factor;
 
@@ -136,12 +146,12 @@ void CoolApp::out_callback() {
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::in_callback() {
+void CoolApp::cool_navigation_zoom_in_button_clicked() {
   window_begin.x += zoom_factor;
   window_begin.y += zoom_factor;
 
@@ -150,24 +160,22 @@ void CoolApp::in_callback() {
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::zoom_value() {
-  const char *c = cool_navigation_zoom_spin_button->get_text().c_str();
-
-  zoom_factor = atol(c);
+void CoolApp::cool_navigation_zoom_spin_button_changed() {
+  zoom_factor = cool_navigation_zoom_spin_button->get_value_as_int();
 }
 
-void CoolApp::create_drawable_entry_value() {
+void CoolApp::cool_main_entry_changed() {
   const char *cstr = cool_main_entry->get_text().c_str();
 
   create_drawable_entrie_string = std::string{cstr};
 }
 
-void CoolApp::create_drawable_from_entry() {
+void CoolApp::cool_main_entry_button_clicked() {
   std::cout << create_drawable_entrie_string << std::endl;
 
   std::stringstream entrie_stream;
@@ -240,12 +248,12 @@ void CoolApp::create_drawable_from_entry() {
 
   cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
+        return cool_drawing_area_draw(cr);
       });
   cool_drawing_area->queue_draw();
 }
 
-int CoolApp::run(int argc, char **argv) {
+int CoolApp::run() {
   return gtk_application->run(*cool_main_application_window);
 }
 } // namespace cool_app
