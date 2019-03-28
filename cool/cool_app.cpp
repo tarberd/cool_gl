@@ -170,22 +170,19 @@ void CoolApp::cool_navigation_zoom_spin_button_changed() {
 }
 
 void CoolApp::cool_main_entry_changed() {
-  const char *cstr = cool_main_entry->get_text().c_str();
-
+  auto cstr = cool_main_entry->get_text();
   create_drawable_entrie_string = std::string{cstr};
 }
 
 void CoolApp::cool_main_entry_button_clicked() {
-  std::cout << create_drawable_entrie_string << std::endl;
-
   std::stringstream entrie_stream;
   entrie_stream << create_drawable_entrie_string;
 
-  std::string current_string;
+  std::string command_string;
 
-  entrie_stream >> current_string;
+  entrie_stream >> command_string;
 
-  if (current_string == "point") {
+  if (command_string == "point") {
     std::string name;
     std::string x_string;
     std::string y_string;
@@ -200,7 +197,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
   }
-  if (current_string == "line") {
+  if (command_string == "line") {
     std::string name;
 
     std::string x_begin_string;
@@ -224,7 +221,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
   }
-  if (current_string == "polygon") {
+  if (command_string == "polygon") {
     std::string name;
 
     std::vector<cool_gl::Vec> points;
