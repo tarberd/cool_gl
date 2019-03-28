@@ -11,6 +11,42 @@
 namespace cool_app {
 
 struct CoolApp {
+  const char *gtk_builder_glade_file = "cool_app_window_design.glade";
+
+  Glib::RefPtr<Gtk::Application> *gtk_application;
+  Glib::RefPtr<Gtk::Builder> *gtk_builder;
+
+  const char *cool_main_application_window_id = "cool_main_application_window";
+  Gtk::ApplicationWindow *cool_main_application_window;
+
+  const char *cool_drawing_area_id = "cool_drawing_area";
+  Gtk::DrawingArea *cool_drawing_area;
+
+  const char *cool_main_entry_id = "cool_main_entry";
+  Gtk::Entry *cool_main_entry;
+
+  const char *cool_main_entry_button_id = "cool_main_entry_button";
+  Gtk::Button *cool_main_entry_button;
+
+  const char *cool_display_file_tree_view_id = "cool_display_file_tree_view";
+  Gtk::TreeView *cool_display_file_tree_view;
+
+  const char *cool_navigation_zoom_spin_button_id =
+      "cool_navigation_zoom_spin_button";
+  Gtk::SpinButton *cool_navigation_zoom_spin_button;
+
+  const char *cool_navigation_button_left_id = "cool_navigation_button_left";
+  Gtk::Button *cool_navigation_button_left;
+
+  const char *cool_navigation_button_down_id = "cool_navigation_button_down";
+  Gtk::Button *cool_navigation_button_down;
+
+  const char *cool_navigation_button_up_id = "cool_navigation_button_up";
+  Gtk::Button *cool_navigation_button_up;
+
+  const char *cool_navigation_button_right_id = "cool_navigation_button_right";
+  Gtk::Button *cool_navigation_button_right;
+
   const double ZOOM_FACTOR = 1.0;
   const double MOVE_FACTOR = 1.0;
 
@@ -21,6 +57,14 @@ struct CoolApp {
 
   Gtk::Window *glade_window;
   Gtk::Dialog *dialog_add_drawable;
+  Gtk::Button *zoom_out;
+  Gtk::Button *zoom_in;
+  Gtk::Button *down;
+  Gtk::Button *up;
+  Gtk::Button *left;
+  Gtk::Button *right;
+  Gtk::Button *button_dialog_add_drawable;
+  Gtk::Button *button_dialog_create_drawable;
 
   Gtk::DrawingArea *glade_drawing_area;
 
@@ -33,6 +77,8 @@ struct CoolApp {
   ModelColumns my_columns;
   Gtk::TreeView *object_tree;
   Glib::RefPtr<Gtk::ListStore> object_list;
+
+  CoolApp();
 
   bool draw_callback(const Cairo::RefPtr<Cairo::Context> &cr);
   void move_down();
