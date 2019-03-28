@@ -14,7 +14,7 @@
       <placeholder/>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="box_1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">8</property>
@@ -23,7 +23,7 @@
         <property name="margin_bottom">8</property>
         <property name="spacing">8</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="box_2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -44,7 +44,7 @@
                     <property name="left_padding">8</property>
                     <property name="right_padding">8</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="box_3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
@@ -58,7 +58,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection"/>
+                                  <object class="GtkTreeSelection" id="cool_display_file_tree_view_selection"/>
                                 </child>
                               </object>
                             </child>
@@ -104,7 +104,7 @@
                     <property name="left_padding">8</property>
                     <property name="right_padding">8</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="box_4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
@@ -125,7 +125,7 @@
                                 <property name="left_padding">8</property>
                                 <property name="right_padding">8</property>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkBox" id="box_5">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
@@ -205,12 +205,12 @@
                                 <property name="left_padding">8</property>
                                 <property name="right_padding">8</property>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkBox" id="box_9">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
-                                      <object class="GtkGrid">
+                                      <object class="GtkGrid" id="grid_1">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="row_homogeneous">True</property>
@@ -320,7 +320,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="box_6">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -345,7 +345,7 @@
                     <property name="left_padding">8</property>
                     <property name="right_padding">8</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="box_7">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
@@ -395,7 +395,7 @@
                     <property name="left_padding">8</property>
                     <property name="right_padding">8</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="box_8">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>

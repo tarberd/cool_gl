@@ -1,3 +1,3 @@
 #include "cool_app.h"
 
-int main() { return cool_app::CoolApp{}.run(); }
+int main(int argc, char **argv) { return cool_app::CoolApp{argc, argv}.run(); }

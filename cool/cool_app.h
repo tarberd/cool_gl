@@ -70,7 +70,7 @@ struct CoolApp {
   ModelColumns my_columns;
   Glib::RefPtr<Gtk::ListStore> object_list;
 
-  CoolApp();
+  CoolApp(int argc, char **argv);
 
   bool cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr);
   void cool_navigation_button_down_clicked();

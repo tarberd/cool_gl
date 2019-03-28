@@ -1,8 +1,8 @@
 #include "cool_app.h"
 namespace cool_app {
 
-CoolApp::CoolApp() {
-  gtk_application = Gtk::Application::create("Cool.gl");
+CoolApp::CoolApp(int argc, char **argv) {
+  gtk_application = Gtk::Application::create(argc, argv, "Cool.gl");
 
   gtk_builder = Gtk::Builder::create();
 
@@ -33,9 +33,7 @@ CoolApp::CoolApp() {
 
   // Connect signal
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_main_entry->signal_changed().connect(
       [this]() { return cool_main_entry_changed(); });
   cool_main_entry_button->signal_clicked().connect(
@@ -98,9 +96,7 @@ void CoolApp::cool_navigation_button_down_clicked() {
   window_end.y -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -109,9 +105,7 @@ void CoolApp::cool_navigation_button_up_clicked() {
   window_end.y += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -120,9 +114,7 @@ void CoolApp::cool_navigation_button_right_clicked() {
   window_end.x += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -131,9 +123,7 @@ void CoolApp::cool_navigation_button_left_clicked() {
   window_end.x -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -145,9 +135,7 @@ void CoolApp::cool_navigation_zoom_out_button_clicked() {
   window_end.y += zoom_factor;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -159,9 +147,7 @@ void CoolApp::cool_navigation_zoom_in_button_clicked() {
   window_end.y -= zoom_factor;
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
@@ -244,9 +230,7 @@ void CoolApp::cool_main_entry_button_clicked() {
   }
 
   cool_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return cool_drawing_area_draw(cr);
-      });
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
