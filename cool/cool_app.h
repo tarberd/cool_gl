@@ -13,8 +13,8 @@ namespace cool_app {
 struct CoolApp {
   const char *gtk_builder_glade_file = "cool_app_window_design.glade";
 
-  Glib::RefPtr<Gtk::Application> *gtk_application;
-  Glib::RefPtr<Gtk::Builder> *gtk_builder;
+  Glib::RefPtr<Gtk::Application> gtk_application;
+  Glib::RefPtr<Gtk::Builder> gtk_builder;
 
   const char *cool_main_application_window_id = "cool_main_application_window";
   Gtk::ApplicationWindow *cool_main_application_window;
@@ -55,27 +55,11 @@ struct CoolApp {
   cool_gl::Vec3 window_begin = {0.0, 0.0, 1.0};
   cool_gl::Vec3 window_end = {40.0, 40.0, 1.0};
 
-  Gtk::Window *glade_window;
-  Gtk::Dialog *dialog_add_drawable;
-  Gtk::Button *zoom_out;
-  Gtk::Button *zoom_in;
-  Gtk::Button *down;
-  Gtk::Button *up;
-  Gtk::Button *left;
-  Gtk::Button *right;
-  Gtk::Button *button_dialog_add_drawable;
-  Gtk::Button *button_dialog_create_drawable;
-
-  Gtk::DrawingArea *glade_drawing_area;
-
-  Gtk::Entry *zoom;
-  Gtk::Entry *add_drawable_comand_entry;
   std::string create_drawable_entrie_string;
 
   std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
 
   ModelColumns my_columns;
-  Gtk::TreeView *object_tree;
   Glib::RefPtr<Gtk::ListStore> object_list;
 
   CoolApp();

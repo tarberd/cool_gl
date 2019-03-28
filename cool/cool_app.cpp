@@ -25,40 +25,33 @@ CoolApp::CoolApp() {
   gtk_builder->get_widget(cool_navigation_button_up_id,
                           cool_navigation_button_up);
   gtk_builder->get_widget(cool_navigation_button_right_id,
-                          cool_navigation_right_up);
+                          cool_navigation_button_right);
+
+  // set_digits int
+  //     range int int
+  //     increments int int
+  //     value int
 
   // Connect signal
-  cool_drawing_area->signal_draw().connect();
+  cool_drawing_area->signal_draw().connect(
+      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
+        return draw_callback(cr);
+      });
 
-  button_dialog_add_drawable->signal_clicked().connect(
-      [this]() { return show_add_drawable_dialog(); });
-
-  button_dialog_create_drawable->signal_clicked().connect(
-      [this]() { return create_drawable_from_entry(); });
-
-  builder->get_widget("entry_add_drawable_dialog_id",
-                      add_drawable_comand_entry);
-
-  add_drawable_comand_entry->get_buffer()->set_max_length(50);
-  add_drawable_comand_entry->signal_changed().connect(
+  cool_main_entry->signal_changed().connect(
       [this]() { return create_drawable_entry_value(); });
 
-  zoom_out->signal_clicked().connect([this]() { return out_callback(); });
-  zoom_in->signal_clicked().connect([this]() { return in_callback(); });
-  down->signal_clicked().connect([this]() { return move_down(); });
-  right->signal_clicked().connect([this]() { return move_right(); });
-  left->signal_clicked().connect([this]() { return move_left(); });
-  up->signal_clicked().connect([this]() { return move_up(); });
+  cool_main_entry_button->signal_clicked().connect(
+      [this]() { return create_drawable_from_entry(); });
 
-  zoom->signal_changed().connect([this]() { return zoom_value(); });
-  zoom->set_text("1");
+  cool_navigation_zoom_spin_button->signal_changed().connect([this]() { return zoom_value(); });
 
-  builder->get_widget("cool_main_gtk_drawing_area_id", glade_drawing_area);
+  cool_navigation_button_left->signal_clicked().connect([this]() { return move_left(); });
+  cool_navigation_button_down->signal_clicked().connect([this]() { return move_down(); });
+  cool_navigation_button_up->signal_clicked().connect([this]() { return move_up(); });
+  cool_navigation_button_right->signal_clicked().connect([this]() { return move_right(); });
 
-  if (glade_drawing_area == nullptr) {
-    throw std::runtime_error(
-        "builder could not find: cool_main_gtk_drawing_area_id widget");
-  }
+  cool_drawing_area->show();
 
   object_list = Gtk::ListStore::create(my_columns);
 
@@ -68,31 +61,20 @@ CoolApp::CoolApp() {
     row[my_columns.column_name] = drawable->name();
   }
 
-  object_tree->set_model(object_list);
-  object_tree->append_column("Type", my_columns.column_type);
-  object_tree->append_column("Nome", my_columns.column_name);
-
-  glade_drawing_area->set_size_request(600, 600);
-
-  glade_drawing_area->signal_draw().connect(
-      [this](const Cairo::RefPtr<Cairo::Context> &cr) {
-        return draw_callback(cr);
-      });
-
-  glade_drawing_area->show();
-
-  return app->run(*glade_window);
+  cool_display_file_tree_view->set_model(object_list);
+  std::cout << "OIE" << std::endl;
+  cool_display_file_tree_view->append_column("Type", my_columns.column_type);
+  cool_display_file_tree_view->append_column("Nome", my_columns.column_name);
 }
 
 bool CoolApp::draw_callback(const Cairo::RefPtr<Cairo::Context> &cr) {
-  const int width = glade_drawing_area->get_width();
-  const int height = glade_drawing_area->get_height();
+  const double width = static_cast<double>(cool_drawing_area->get_width());
+  const double height = static_cast<double>(cool_drawing_area->get_height());
 
   using cool_gl::Vec3;
 
   Vec3 viewport_begin = {0.0, 0.0, 1.0};
-  Vec3 viewport_end = {static_cast<double>(width), static_cast<double>(height),
-                       1};
+  Vec3 viewport_end = {width, height, 1.0};
 
   for (const auto &drawable : drawable_vector) {
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
@@ -105,44 +87,44 @@ void CoolApp::move_down() {
   window_begin.y -= MOVE_FACTOR;
   window_end.y -= MOVE_FACTOR;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::move_up() {
   window_begin.y += MOVE_FACTOR;
   window_end.y += MOVE_FACTOR;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::move_right() {
   window_begin.x += MOVE_FACTOR;
   window_end.x += MOVE_FACTOR;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::move_left() {
   window_begin.x -= MOVE_FACTOR;
   window_end.x -= MOVE_FACTOR;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::out_callback() {
@@ -152,11 +134,11 @@ void CoolApp::out_callback() {
   window_end.x += zoom_factor;
   window_end.y += zoom_factor;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::in_callback() {
@@ -166,26 +148,24 @@ void CoolApp::in_callback() {
   window_end.x -= zoom_factor;
   window_end.y -= zoom_factor;
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
 void CoolApp::zoom_value() {
-  const char *c = zoom->get_text().c_str();
+  const char *c = cool_navigation_zoom_spin_button->get_text().c_str();
 
   zoom_factor = atol(c);
 }
 
 void CoolApp::create_drawable_entry_value() {
-  const char *cstr = add_drawable_comand_entry->get_text().c_str();
+  const char *cstr = cool_main_entry->get_text().c_str();
 
   create_drawable_entrie_string = std::string{cstr};
 }
-
-void CoolApp::show_add_drawable_dialog() { dialog_add_drawable->show(); }
 
 void CoolApp::create_drawable_from_entry() {
   std::cout << create_drawable_entrie_string << std::endl;
@@ -259,12 +239,14 @@ void CoolApp::create_drawable_from_entry() {
     row[my_columns.column_name] = drawable_vector.back()->name();
   }
 
-  glade_drawing_area->signal_draw().connect(
+  cool_drawing_area->signal_draw().connect(
       [this](const Cairo::RefPtr<Cairo::Context> &cr) {
         return draw_callback(cr);
       });
-  glade_drawing_area->queue_draw();
+  cool_drawing_area->queue_draw();
 }
 
-int CoolApp::run(int argc, char **argv) { return 0; }
+int CoolApp::run(int argc, char **argv) {
+  return gtk_application->run(*cool_main_application_window);
+}
 } // namespace cool_app
