@@ -54,9 +54,11 @@ Vec multiply(const Matrix &left, const Vec &right) {
   Vec result;
   int N = left.size();
   for (int i = 0; i < N; i++) {
+    Matrix::value_type::value_type num = 0;
     for (int j = 0; j < N; j++) {
-      result[i] += (left[i][j] * right[j]);
+      num += (left[i][j] * right[j]);
     }
+    result[i]  = num;
   }
   return result;
 }
