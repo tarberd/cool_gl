@@ -15,6 +15,8 @@ struct Vec {
 
   Vec() = default;
   Vec(const Vec &) = default;
+  Vec &operator=(const Vec &) = default;
+  Vec &operator=(Vec &&) = default;
   Vec(Vec &&) = default;
   Vec(double x, double y, double z = 1.0, double a = 1.0)
       : x{x}, y{y}, z{z}, a{a} {}

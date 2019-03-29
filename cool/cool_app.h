@@ -60,8 +60,8 @@ struct CoolApp {
 
   int zoom_factor = 0;
 
-  cool_gl::Vec window_begin = {0.0, 0.0, 1.0};
-  cool_gl::Vec window_end = {40.0, 40.0, 1.0};
+  cool_gl::Vec window_begin = {-20.0, -20.0};
+  cool_gl::Vec window_end = {20.0, 20.0};
 
   std::string create_drawable_entrie_string;
 

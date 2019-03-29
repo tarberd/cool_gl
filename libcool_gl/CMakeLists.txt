@@ -7,6 +7,8 @@ target_include_directories(cool_gl PUBLIC
 
 target_link_libraries(cool_gl ${GTKMM_LIBRARIES})
 
+add_subdirectory(test)
+
 include(GNUInstallDirs)
 
 install(EXPORT ${PROJECT_NAME}-targets
