@@ -79,12 +79,17 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   const double width = static_cast<double>(cool_drawing_area->get_width());
   const double height = static_cast<double>(cool_drawing_area->get_height());
 
+  using cool_gl::Matrix;
   using cool_gl::Vec;
 
   Vec viewport_begin = {0.0, 0.0, 1.0};
   Vec viewport_end = {width, height, 1.0};
 
+  const double pi = std::acos(-1);
+  auto rotation_transform = cool_gl::create_rotate_transform(pi / 3.0);
+
   for (const auto &drawable : drawable_vector) {
+    drawable->transform(rotation_transform);
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
   }
 

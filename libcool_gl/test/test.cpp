@@ -30,4 +30,19 @@ TEST_CASE("Vector Matrix multiplication", "[cool_gl]") {
               {0.0, 0.0, 0.0, 1.0}}};
 
   test_vec_matrix_multiply(m, v, {2.0, 2.0, 1.0, 1.0});
+
+  v = Vec{-1.0, -1.0, 1.0, 1.0};
+  m = Matrix{{{1.0, 0.0, 0.0, 1.0},
+              {0.0, 1.0, 0.0, 1.0},
+              {0.0, 0.0, 1.0, 0.0},
+              {0.0, 0.0, 0.0, 1.0}}};
+
+  test_vec_matrix_multiply(m, v, {0.0, 0.0, 1.0, 1.0});
+}
+
+TEST_CASE("Test translation transform", "[cool_gl]") {
+  auto v = Vec{3.0, -17.0, 5.0};
+  auto m = create_translate_transform(5.0, 2.0, -3.0);
+
+  test_vec_matrix_multiply(m, v, {8.0, -15.0, 2.0});
 }

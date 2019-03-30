@@ -5,7 +5,16 @@
 
 namespace cool_gl {
 
-using Matrix = std::array<std::array<double, 4>, 4>;
+struct Colour {
+  double r{0.0};
+  double g{0.0};
+  double b{0.0};
+
+  Colour() = default;
+  Colour(const Colour &) = default;
+  Colour(Colour &&) = default;
+  Colour(double r, double g, double b) : r{r}, g{g}, b{b} {}
+};
 
 struct Vec {
   double x;
@@ -25,26 +34,27 @@ struct Vec {
   double &operator[](int x);
 };
 
+using Matrix = std::array<std::array<double, 4>, 4>;
+
 Matrix multiply(const Matrix &left, const Matrix &right);
+
 Vec multiply(const Matrix &left, const Vec &right);
 
-struct Colour {
-  double r{0.0};
-  double g{0.0};
-  double b{0.0};
-
-  Colour() = default;
-  Colour(const Colour &) = default;
-  Colour(Colour &&) = default;
-  Colour(double r, double g, double b) : r{r}, g{g}, b{b} {}
-};
+Matrix create_translate_transform(double dx, double xy, double dz);
+Matrix create_scale_transform(double sx, double sy, double sz);
+Matrix create_rotate_transform(double rad);
 
 struct Drawable {
   virtual ~Drawable();
+
   virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
                     Vec window_max, Vec viewport_min,
                     Vec viewport_max) const = 0;
+
+  virtual void transform(const Matrix &transform) noexcept = 0;
+
   virtual std::string type() const noexcept = 0;
+
   virtual const std::string &name() const noexcept = 0;
   virtual std::string &name() noexcept = 0;
 };
@@ -65,6 +75,8 @@ struct Point : public Drawable {
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
             Vec window_max, Vec viewport_min, Vec viewport_max) const final;
+
+  void transform(const Matrix &transform) noexcept;
 
   std::string type() const noexcept final;
 
@@ -92,6 +104,8 @@ struct Line : public Drawable {
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
             Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
+  void transform(const Matrix &transform) noexcept;
+
   std::string type() const noexcept final;
 
   const std::string &name() const noexcept final;
@@ -116,6 +130,8 @@ struct Polygon : public Drawable {
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
             Vec window_max, Vec viewport_min, Vec viewport_max) const final;
+
+  void transform(const Matrix &transform) noexcept;
 
   std::string type() const noexcept final;
 

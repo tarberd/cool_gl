@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cool_gl/cool_gl.h>
 #include <exception>
 
@@ -31,6 +32,27 @@ double &Vec::operator[](int index) {
   default:
     throw std::out_of_range("Vec::operator[] out off bounds");
   }
+}
+
+Matrix create_translate_transform(double dx, double dy, double dz) {
+  return {{{1.0, 0.0, 0.0, dx},
+           {0.0, 1.0, 0.0, dy},
+           {0.0, 0.0, 1.0, dz},
+           {0.0, 0.0, 0.0, 1.0}}};
+}
+
+Matrix create_scale_transform(double sx, double sy, double sz) {
+  return {{{sx, 0.0, 0.0, 0.0},
+           {0.0, sy, 0.0, 0.0},
+           {0.0, 0.0, sz, 0.0},
+           {0.0, 0.0, 0.0, 1.0}}};
+}
+
+Matrix create_rotate_transform(double rad) {
+  return {{{std::cos(rad), std::sin(rad), 0.0, 0.0},
+           {-1.0 * std::sin(rad), std::cos(rad), 0.0, 0.0},
+           {0.0, 0.0, 1.0, 0.0},
+           {0.0, 0.0, 0.0, 1.0}}};
 }
 
 Matrix multiply(const Matrix &left, const Matrix &right) {
@@ -84,6 +106,11 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
   cr->stroke();
 }
 
+void Line::transform(const Matrix &transform) noexcept {
+  begin = multiply(transform, begin);
+  end = multiply(transform, end);
+}
+
 std::string Line::type() const noexcept { return "Line"; }
 
 const std::string & Line::name() const noexcept {
@@ -107,6 +134,10 @@ void Point::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
   cr->move_to(transformed_point.x, transformed_point.y);
   cr->arc(transformed_point.x, transformed_point.y, 5.0, 0.0, 2*M_PI);
   cr->fill();
+}
+
+void Point::transform(const Matrix &transform) noexcept {
+  position = multiply(transform, position);
 }
 
 std::string Point::type() const noexcept { return "Point"; }
@@ -147,10 +178,16 @@ void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
   }
 }
 
+void Polygon::transform(const Matrix &transform) noexcept {
+  for (auto &vec : points) {
+    vec = multiply(transform, vec);
+  }
+}
+
 std::string Polygon::type() const noexcept { return "Polygon"; }
 
 const std::string &Polygon::name() const noexcept { return m_name; }
 
 std::string &Polygon::name() noexcept { return m_name; }
 
-} // namespace cool_gl
+  } // namespace cool_gl
