@@ -181,7 +181,10 @@ void CoolApp::cool_main_entry_button_clicked() {
                   << std::endl
                   << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl
                   << "\ttranslate [name] [delta_x] [delta_y] [delta_z]"
-                  << std::endl;
+                  << std::endl
+                  << "\tscale [name] [scale_x] [scale_y] [scale_z]" << std::endl
+                  << "\trotate [name] [rad]" << std::endl
+                  << "\ttransform [object_name] [transform_name]" << std::endl;
 
   } else if (command_string == "point") {
     std::string name;
@@ -279,6 +282,103 @@ void CoolApp::cool_main_entry_button_clicked() {
     std::string dz_string;
 
     entrie_stream >> name >> dx_string >> dy_string >> dz_string;
+
+    double dx = std::stod(dx_string);
+    double dy = std::stod(dy_string);
+    double dz = std::stod(dz_string);
+
+    auto translate_transfrom = cool_gl::create_translate_transform(dx, dy, dz);
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\ttransform matrix: " << std::endl;
+    output_stream << "\t";
+    for (const auto &row : translate_transfrom) {
+      for (const auto &num : row) {
+        output_stream << num << " ";
+      }
+      output_stream << std::endl << "\t";
+    }
+    output_stream << std::endl;
+
+    name_to_transform.emplace(std::move(name), std::move(translate_transfrom));
+  } else if (command_string == "scale") {
+    std::string name;
+
+    std::string sx_string;
+    std::string sy_string;
+    std::string sz_string;
+
+    entrie_stream >> name >> sx_string >> sy_string >> sz_string;
+
+    double sx = std::stod(sx_string);
+    double sy = std::stod(sy_string);
+    double sz = std::stod(sz_string);
+
+    auto transfrom = cool_gl::create_scale_transform(sx, sy, sz);
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\ttransform matrix: " << std::endl;
+    output_stream << "\t";
+    for (const auto &row : transfrom) {
+      for (const auto &num : row) {
+        output_stream << num << " ";
+      }
+      output_stream << std::endl << "\t";
+    }
+    output_stream << std::endl;
+
+    name_to_transform.emplace(std::move(name), std::move(transfrom));
+  } else if (command_string == "rotate") {
+    std::string name;
+
+    std::string sx_string;
+    std::string sy_string;
+    std::string sz_string;
+
+    entrie_stream >> name >> sx_string >> sy_string >> sz_string;
+
+    double sx = std::stod(sx_string);
+    double sy = std::stod(sy_string);
+    double sz = std::stod(sz_string);
+
+    auto transfrom = cool_gl::create_scale_transform(sx, sy, sz);
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\ttransform matrix: " << std::endl;
+    output_stream << "\t";
+    for (const auto &row : transfrom) {
+      for (const auto &num : row) {
+        output_stream << num << " ";
+      }
+      output_stream << std::endl << "\t";
+    }
+    output_stream << std::endl;
+
+    name_to_transform.emplace(std::move(name), std::move(transfrom));
+  } else if (command_string == "transform") {
+    std::string drawable_name;
+    std::string transform_name;
+
+    entrie_stream >> drawable_name >> transform_name;
+
+    const auto &transform = name_to_transform[transform_name];
+
+    for (const auto &drawable : drawable_vector) {
+      if (drawable->name() == drawable_name) {
+        auto mass_centre = drawable->mass_centre();
+
+        auto translate_to_centre = cool_gl::create_translate_transform(
+            -1 * mass_centre.x, -1 * mass_centre.y, -1 * mass_centre.z);
+
+        auto transform_from_centre = cool_gl::create_translate_transform(
+            mass_centre.x, mass_centre.y, mass_centre.z);
+
+        drawable->transform(transform);
+      }
+    }
   } else {
     output_stream
         << "Please enter a valid command! Enter help to see valid commands."

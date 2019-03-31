@@ -111,7 +111,16 @@ void Line::transform(const Matrix &transform) noexcept {
   end = multiply(transform, end);
 }
 
-std::string Line::type() const noexcept { return "Line"; }
+Vec Line::mass_centre() noexcept {
+  double x_centre = (begin.x + end.x) / 2.0;
+  double y_centre = (begin.y + end.y) / 2.0;
+
+  return {x_centre, y_centre};
+}
+
+std::string Line::type() const noexcept {
+  return "Line";
+}
 
 const std::string & Line::name() const noexcept {
     return m_name;
@@ -139,6 +148,8 @@ void Point::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
 void Point::transform(const Matrix &transform) noexcept {
   position = multiply(transform, position);
 }
+
+Vec Point::mass_centre() noexcept { return position; }
 
 std::string Point::type() const noexcept { return "Point"; }
 
@@ -184,10 +195,21 @@ void Polygon::transform(const Matrix &transform) noexcept {
   }
 }
 
+Vec Polygon::mass_centre() noexcept {
+  double x_sum = 0.0;
+  double y_sum = 0.0;
+
+  for (const auto &point : points) {
+    x_sum += point.x;
+    y_sum += point.y;
+  }
+  return {x_sum, y_sum};
+}
+
 std::string Polygon::type() const noexcept { return "Polygon"; }
 
 const std::string &Polygon::name() const noexcept { return m_name; }
 
 std::string &Polygon::name() noexcept { return m_name; }
 
-  } // namespace cool_gl
+} // namespace cool_gl

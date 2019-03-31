@@ -53,6 +53,8 @@ struct Drawable {
 
   virtual void transform(const Matrix &transform) noexcept = 0;
 
+  virtual Vec mass_centre() noexcept = 0;
+
   virtual std::string type() const noexcept = 0;
 
   virtual const std::string &name() const noexcept = 0;
@@ -77,6 +79,8 @@ struct Point : public Drawable {
             Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
+
+  Vec mass_centre() noexcept;
 
   std::string type() const noexcept final;
 
@@ -106,6 +110,8 @@ struct Line : public Drawable {
 
   void transform(const Matrix &transform) noexcept;
 
+  Vec mass_centre() noexcept;
+
   std::string type() const noexcept final;
 
   const std::string &name() const noexcept final;
@@ -132,6 +138,8 @@ struct Polygon : public Drawable {
             Vec window_max, Vec viewport_min, Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
+
+  Vec mass_centre() noexcept;
 
   std::string type() const noexcept final;
 
