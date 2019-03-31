@@ -62,10 +62,10 @@ TEST_CASE("Test translation transform", "[cool_gl]") {
 TEST_CASE("Test matrix matrix multiplication", "[cool_gl]") {
   auto m1 = create_translate_transform(5.0, 2.0, -3.0);
   auto m2 = create_translate_transform(5.0, 2.0, -3.0);
-  auto expected = Matrix{{{1.0, 0.0, 0.0, 1.0},
-                          {0.0, 1.0, 0.0, 1.0},
-                          {0.0, 0.0, 1.0, 0.0},
-                          {10.0, 4.0, -6.0, 1.0}}};
+  auto expected = Matrix{{{1.0, 0.0, 0.0, 10.0},
+                          {0.0, 1.0, 0.0, 4.0},
+                          {0.0, 0.0, 1.0, -6.0},
+                          {0.0, 0.0, 0.0, 1.0}}};
 
   test_matrix_matrix_multiply(m1, m2, expected);
 }

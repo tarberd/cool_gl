@@ -333,17 +333,13 @@ void CoolApp::cool_main_entry_button_clicked() {
   } else if (command_string == "rotate") {
     std::string name;
 
-    std::string sx_string;
-    std::string sy_string;
-    std::string sz_string;
+    std::string rad_string;
 
-    entrie_stream >> name >> sx_string >> sy_string >> sz_string;
+    entrie_stream >> name >> rad_string;
 
-    double sx = std::stod(sx_string);
-    double sy = std::stod(sy_string);
-    double sz = std::stod(sz_string);
+    double rad = std::stod(rad_string);
 
-    auto transfrom = cool_gl::create_scale_transform(sx, sy, sz);
+    auto transfrom = cool_gl::create_rotate_transform(rad);
 
     output_stream << "Create: " << command_string << std::endl
                   << "\tname: " << name << std::endl;
@@ -376,7 +372,11 @@ void CoolApp::cool_main_entry_button_clicked() {
         auto transform_from_centre = cool_gl::create_translate_transform(
             mass_centre.x, mass_centre.y, mass_centre.z);
 
+        drawable->transform(translate_to_centre);
+
         drawable->transform(transform);
+
+        drawable->transform(transform_from_centre);
       }
     }
   } else {

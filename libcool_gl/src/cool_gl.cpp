@@ -80,7 +80,7 @@ Vec multiply(const Matrix &left, const Vec &right) {
     for (int j = 0; j < N; j++) {
       num += (left[i][j] * right[j]);
     }
-    result[i]  = num;
+    result[i] = num;
   }
   return result;
 }
@@ -115,7 +115,7 @@ Vec Line::mass_centre() noexcept {
   double x_centre = (begin.x + end.x) / 2.0;
   double y_centre = (begin.y + end.y) / 2.0;
 
-  return {x_centre, y_centre};
+  return Vec{x_centre, y_centre};
 }
 
 std::string Line::type() const noexcept {
@@ -203,7 +203,11 @@ Vec Polygon::mass_centre() noexcept {
     x_sum += point.x;
     y_sum += point.y;
   }
-  return {x_sum, y_sum};
+
+  x_sum /= points.size();
+  y_sum /= points.size();
+
+  return Vec{x_sum, y_sum};
 }
 
 std::string Polygon::type() const noexcept { return "Polygon"; }
