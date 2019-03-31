@@ -14,6 +14,8 @@ CoolApp::CoolApp(int argc, char **argv) {
   gtk_builder->get_widget(cool_drawing_area_id, cool_drawing_area);
   gtk_builder->get_widget(cool_main_entry_id, cool_main_entry);
   gtk_builder->get_widget(cool_main_entry_button_id, cool_main_entry_button);
+  gtk_builder->get_widget(cool_main_entry_text_view_output_id,
+                          cool_main_entry_text_view_output);
   gtk_builder->get_widget(cool_display_file_tree_view_id,
                           cool_display_file_tree_view);
   gtk_builder->get_widget(cool_navigation_zoom_spin_button_id,
@@ -167,13 +169,23 @@ void CoolApp::cool_main_entry_changed() {
 
 void CoolApp::cool_main_entry_button_clicked() {
   std::stringstream entrie_stream;
+  std::stringstream output_stream;
+  output_stream << std::skipws;
+
   entrie_stream << create_drawable_entrie_string;
 
   std::string command_string;
 
   entrie_stream >> command_string;
 
-  if (command_string == "point") {
+  if (command_string == "help") {
+    output_stream << "Available commands:" << std::endl
+                  << "\tpoint [name] [x] [y]" << std::endl
+                  << "\tline [name] [begin_x] [begin_y] [end_x] [end_y]"
+                  << std::endl
+                  << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl;
+
+  } else if (command_string == "point") {
     std::string name;
     std::string x_string;
     std::string y_string;
@@ -187,8 +199,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
-  }
-  if (command_string == "line") {
+  } else if (command_string == "line") {
     std::string name;
 
     std::string x_begin_string;
@@ -211,8 +222,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
-  }
-  if (command_string == "polygon") {
+  } else if (command_string == "polygon") {
     std::string name;
 
     std::vector<cool_gl::Vec> points;
@@ -232,7 +242,23 @@ void CoolApp::cool_main_entry_button_clicked() {
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
+  } else {
+    output_stream
+        << "Please enter a valid command! Enter help to see valid commands."
+        << std::endl;
   }
+
+  std::string command_output_string = output_stream.str();
+
+  auto buffer_end = cool_main_entry_text_view_output->get_buffer()->end();
+
+  buffer_end = cool_main_entry_text_view_output->get_buffer()->insert(
+      buffer_end, command_output_string);
+
+  auto end_mark =
+      cool_main_entry_text_view_output->get_buffer()->create_mark(buffer_end);
+
+  cool_main_entry_text_view_output->scroll_to(end_mark);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));

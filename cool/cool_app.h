@@ -28,6 +28,10 @@ struct CoolApp {
   const char *cool_main_entry_button_id = "cool_main_entry_button";
   Gtk::Button *cool_main_entry_button;
 
+  const char *cool_main_entry_text_view_output_id =
+      "cool_main_entry_text_view_output";
+  Gtk::TextView *cool_main_entry_text_view_output;
+
   const char *cool_display_file_tree_view_id = "cool_display_file_tree_view";
   Gtk::TreeView *cool_display_file_tree_view;
 
