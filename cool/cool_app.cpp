@@ -184,7 +184,8 @@ void CoolApp::cool_main_entry_button_clicked() {
                   << std::endl
                   << "\tscale [name] [scale_x] [scale_y] [scale_z]" << std::endl
                   << "\trotate [name] [rad]" << std::endl
-                  << "\ttransform [object_name] [transform_name]" << std::endl;
+                  << "\ttransform [object_name] [list [transform_name] ...]"
+                  << std::endl;
 
   } else if (command_string == "point") {
     std::string name;
@@ -287,13 +288,13 @@ void CoolApp::cool_main_entry_button_clicked() {
     double dy = std::stod(dy_string);
     double dz = std::stod(dz_string);
 
-    auto translate_transfrom = cool_gl::create_translate_transform(dx, dy, dz);
+    auto translate_transform = cool_gl::create_translate_transform(dx, dy, dz);
 
     output_stream << "Create: " << command_string << std::endl
                   << "\tname: " << name << std::endl;
     output_stream << "\ttransform matrix: " << std::endl;
     output_stream << "\t";
-    for (const auto &row : translate_transfrom) {
+    for (const auto &row : translate_transform) {
       for (const auto &num : row) {
         output_stream << num << " ";
       }
@@ -301,7 +302,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     }
     output_stream << std::endl;
 
-    name_to_transform.emplace(std::move(name), std::move(translate_transfrom));
+    name_to_transform.emplace(std::move(name), std::move(translate_transform));
   } else if (command_string == "scale") {
     std::string name;
 
@@ -315,13 +316,13 @@ void CoolApp::cool_main_entry_button_clicked() {
     double sy = std::stod(sy_string);
     double sz = std::stod(sz_string);
 
-    auto transfrom = cool_gl::create_scale_transform(sx, sy, sz);
+    auto scale_transform = cool_gl::create_scale_transform(sx, sy, sz);
 
     output_stream << "Create: " << command_string << std::endl
                   << "\tname: " << name << std::endl;
     output_stream << "\ttransform matrix: " << std::endl;
     output_stream << "\t";
-    for (const auto &row : transfrom) {
+    for (const auto &row : scale_transform) {
       for (const auto &num : row) {
         output_stream << num << " ";
       }
@@ -329,7 +330,7 @@ void CoolApp::cool_main_entry_button_clicked() {
     }
     output_stream << std::endl;
 
-    name_to_transform.emplace(std::move(name), std::move(transfrom));
+    name_to_transform.emplace(std::move(name), std::move(scale_transform));
   } else if (command_string == "rotate") {
     std::string name;
 
@@ -339,13 +340,13 @@ void CoolApp::cool_main_entry_button_clicked() {
 
     double rad = std::stod(rad_string);
 
-    auto transfrom = cool_gl::create_rotate_transform(rad);
+    auto rotate_transform = cool_gl::create_rotate_transform(rad);
 
     output_stream << "Create: " << command_string << std::endl
                   << "\tname: " << name << std::endl;
     output_stream << "\ttransform matrix: " << std::endl;
     output_stream << "\t";
-    for (const auto &row : transfrom) {
+    for (const auto &row : rotate_transform) {
       for (const auto &num : row) {
         output_stream << num << " ";
       }
@@ -353,14 +354,28 @@ void CoolApp::cool_main_entry_button_clicked() {
     }
     output_stream << std::endl;
 
-    name_to_transform.emplace(std::move(name), std::move(transfrom));
+    name_to_transform.emplace(std::move(name), std::move(rotate_transform));
   } else if (command_string == "transform") {
     std::string drawable_name;
     std::string transform_name;
 
-    entrie_stream >> drawable_name >> transform_name;
+    entrie_stream >> drawable_name;
 
-    const auto &transform = name_to_transform[transform_name];
+    auto transform_result = cool_gl::create_scale_transform(1.0, 1.0, 1.0);
+
+    while (entrie_stream >> transform_name) {
+      auto transform = name_to_transform.at(transform_name);
+      transform_result = cool_gl::multiply(transform_result, transform);
+    }
+
+    output_stream << "transform " << drawable_name
+                  << " by matrix: " << std::endl;
+    for (const auto &row : transform_result) {
+      for (const auto &num : row) {
+        output_stream << num << " ";
+      }
+      output_stream << std::endl;
+    }
 
     for (const auto &drawable : drawable_vector) {
       if (drawable->name() == drawable_name) {
@@ -369,14 +384,14 @@ void CoolApp::cool_main_entry_button_clicked() {
         auto translate_to_centre = cool_gl::create_translate_transform(
             -1 * mass_centre.x, -1 * mass_centre.y, -1 * mass_centre.z);
 
-        auto transform_from_centre = cool_gl::create_translate_transform(
+        auto translate_from_centre = cool_gl::create_translate_transform(
             mass_centre.x, mass_centre.y, mass_centre.z);
 
         drawable->transform(translate_to_centre);
 
-        drawable->transform(transform);
+        drawable->transform(transform_result);
 
-        drawable->transform(transform_from_centre);
+        drawable->transform(translate_from_centre);
       }
     }
   } else {

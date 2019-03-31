@@ -52,11 +52,26 @@ TEST_CASE("Vector Matrix multiplication", "[cool_gl]") {
   test_vec_matrix_multiply(m, v, {0.0, 0.0, 1.0, 1.0});
 }
 
-TEST_CASE("Test translation transform", "[cool_gl]") {
+TEST_CASE("Test transform", "[cool_gl]") {
   auto v = Vec{3.0, -17.0, 5.0};
   auto m = create_translate_transform(5.0, 2.0, -3.0);
 
   test_vec_matrix_multiply(m, v, {8.0, -15.0, 2.0});
+
+  v = Vec{0.0, 0.0, 0.0};
+  m = create_scale_transform(2.0, 2.0, 2.0);
+
+  test_vec_matrix_multiply(m, v, {0.0, 0.0, 0.0});
+
+  v = Vec{1.0, 1.0, 1.0};
+  m = create_scale_transform(2.0, 3.0, 4.0);
+
+  test_vec_matrix_multiply(m, v, {2.0, 3.0, 4.0});
+
+  v = Vec{1.0, 2.0, -3.0};
+  m = create_scale_transform(2.0, 3.0, 4.0);
+
+  test_vec_matrix_multiply(m, v, {2.0, 6.0, -12.0});
 }
 
 TEST_CASE("Test matrix matrix multiplication", "[cool_gl]") {
