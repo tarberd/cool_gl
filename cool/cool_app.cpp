@@ -87,11 +87,7 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   Vec viewport_begin = {0.0, 0.0, 1.0};
   Vec viewport_end = {width, height, 1.0};
 
-  const double pi = std::acos(-1);
-  auto rotation_transform = cool_gl::create_rotate_transform(pi / 3.0);
-
   for (const auto &drawable : drawable_vector) {
-    drawable->transform(rotation_transform);
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
   }
 
@@ -183,18 +179,30 @@ void CoolApp::cool_main_entry_button_clicked() {
                   << "\tpoint [name] [x] [y]" << std::endl
                   << "\tline [name] [begin_x] [begin_y] [end_x] [end_y]"
                   << std::endl
-                  << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl;
+                  << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl
+                  << "\ttranslate [name] [delta_x] [delta_y] [delta_z]"
+                  << std::endl;
 
   } else if (command_string == "point") {
     std::string name;
+
     std::string x_string;
     std::string y_string;
 
     entrie_stream >> name >> x_string >> y_string;
 
-    auto position = cool_gl::Vec{std::stod(x_string), std::stod(y_string), 1.0};
-    drawable_vector.emplace_back(
-        new cool_gl::Point{position, cool_gl::Colour{0.0, 0.0, 0.0}, name});
+    double x = std::stod(x_string);
+    double y = std::stod(y_string);
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\tpoint position: ";
+    output_stream << "(" << x << ", " << y << ") ";
+    output_stream << std::endl;
+
+    auto position = cool_gl::Vec{x, y, 1.0};
+    drawable_vector.emplace_back(new cool_gl::Point{
+        std::move(position), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
@@ -211,13 +219,24 @@ void CoolApp::cool_main_entry_button_clicked() {
     entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
         y_end_string;
 
-    auto begin =
-        cool_gl::Vec{std::stod(x_begin_string), std::stod(y_begin_string), 1.0};
-    auto end =
-        cool_gl::Vec{std::stod(x_end_string), std::stod(y_end_string), 1.0};
+    double x_begin = std::stod(x_begin_string);
+    double y_begin = std::stod(y_begin_string);
+    double x_end = std::stod(x_end_string);
+    double y_end = std::stod(y_end_string);
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\tpoint begin and end: ";
+    output_stream << "(" << x_begin << ", " << y_begin << ") ";
+    output_stream << "(" << x_end << ", " << y_end << ") ";
+    output_stream << std::endl;
+
+    auto begin = cool_gl::Vec{x_begin, y_begin, 1.0};
+    auto end = cool_gl::Vec{x_end, y_end, 1.0};
 
     drawable_vector.emplace_back(
-        new cool_gl::Line{begin, end, cool_gl::Colour{0.0, 0.0, 0.0}, name});
+        new cool_gl::Line{std::move(begin), std::move(end),
+                          cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
@@ -225,23 +244,41 @@ void CoolApp::cool_main_entry_button_clicked() {
   } else if (command_string == "polygon") {
     std::string name;
 
-    std::vector<cool_gl::Vec> points;
+    entrie_stream >> name;
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\tpoint list: ";
 
     std::string x_string;
     std::string y_string;
 
-    entrie_stream >> name;
-    while (entrie_stream >> x_string >> y_string) {
+    std::vector<cool_gl::Vec> points;
 
-      points.emplace_back(std::stod(x_string), std::stod(y_string), 1.0);
+    while (entrie_stream >> x_string >> y_string) {
+      double x = std::stod(x_string);
+      double y = std::stod(y_string);
+      output_stream << "(" << x << ", " << y << ") ";
+
+      points.emplace_back(x, y, 1.0);
     }
 
+    output_stream << std::endl;
+
     drawable_vector.emplace_back(new cool_gl::Polygon{
-        std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, name});
+        std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable_vector.back()->type();
     row[my_columns.column_name] = drawable_vector.back()->name();
+  } else if (command_string == "translate") {
+    std::string name;
+
+    std::string dx_string;
+    std::string dy_string;
+    std::string dz_string;
+
+    entrie_stream >> name >> dx_string >> dy_string >> dz_string;
   } else {
     output_stream
         << "Please enter a valid command! Enter help to see valid commands."
@@ -268,4 +305,5 @@ void CoolApp::cool_main_entry_button_clicked() {
 int CoolApp::run() {
   return gtk_application->run(*cool_main_application_window);
 }
+
 } // namespace cool_app
