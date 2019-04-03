@@ -88,7 +88,8 @@ struct CoolApp {
   void cool_navigation_zoom_spin_button_changed();
   void cool_main_entry_changed();
   void cool_main_entry_button_clicked();
+  void print_to_cool_main_entry_text_view_output(std::stringstream &out);
   int run();
-};
+  };
 
 } // namespace cool_app

@@ -1,6 +1,32 @@
 #include "cool_app.h"
 namespace cool_app {
 
+void print_help(std::stringstream &out) {
+  out << "Available commands:" << std::endl
+      << "\tpoint [name] [x] [y]" << std::endl
+      << "\tline [name] [begin_x] [begin_y] [end_x] [end_y]" << std::endl
+      << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl
+      << "\ttranslate [name] [delta_x] [delta_y] [delta_z]" << std::endl
+      << "\tscale [name] [scale_x] [scale_y] [scale_z]" << std::endl
+      << "\trotate [name] [rad]" << std::endl
+      << "\ttransform [object_name] [list [transform_name] ...]" << std::endl;
+}
+
+void CoolApp::print_to_cool_main_entry_text_view_output(
+    std::stringstream &out) {
+  std::string command_output_string = out.str();
+
+  auto buffer_end = cool_main_entry_text_view_output->get_buffer()->end();
+
+  buffer_end = cool_main_entry_text_view_output->get_buffer()->insert(
+      buffer_end, command_output_string);
+
+  auto end_mark =
+      cool_main_entry_text_view_output->get_buffer()->create_mark(buffer_end);
+
+  cool_main_entry_text_view_output->scroll_to(end_mark);
+}
+
 CoolApp::CoolApp(int argc, char **argv) {
   gtk_application = Gtk::Application::create(argc, argv, "Cool.gl");
 
@@ -63,6 +89,11 @@ CoolApp::CoolApp(int argc, char **argv) {
   cool_navigation_zoom_spin_button->set_range(1, 100);
   cool_navigation_zoom_spin_button->set_increments(1, 100);
   cool_navigation_zoom_spin_button->set_value(1);
+
+  // Print Help to text view
+  std::stringstream out;
+  print_help(out);
+  print_to_cool_main_entry_text_view_output(out);
 
   object_list = Gtk::ListStore::create(my_columns);
 
@@ -175,17 +206,7 @@ void CoolApp::cool_main_entry_button_clicked() {
   entrie_stream >> command_string;
 
   if (command_string == "help") {
-    output_stream << "Available commands:" << std::endl
-                  << "\tpoint [name] [x] [y]" << std::endl
-                  << "\tline [name] [begin_x] [begin_y] [end_x] [end_y]"
-                  << std::endl
-                  << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl
-                  << "\ttranslate [name] [delta_x] [delta_y] [delta_z]"
-                  << std::endl
-                  << "\tscale [name] [scale_x] [scale_y] [scale_z]" << std::endl
-                  << "\trotate [name] [rad]" << std::endl
-                  << "\ttransform [object_name] [list [transform_name] ...]"
-                  << std::endl;
+    print_help(output_stream);
 
   } else if (command_string == "point") {
     std::string name;
@@ -400,17 +421,7 @@ void CoolApp::cool_main_entry_button_clicked() {
         << std::endl;
   }
 
-  std::string command_output_string = output_stream.str();
-
-  auto buffer_end = cool_main_entry_text_view_output->get_buffer()->end();
-
-  buffer_end = cool_main_entry_text_view_output->get_buffer()->insert(
-      buffer_end, command_output_string);
-
-  auto end_mark =
-      cool_main_entry_text_view_output->get_buffer()->create_mark(buffer_end);
-
-  cool_main_entry_text_view_output->scroll_to(end_mark);
+  print_to_cool_main_entry_text_view_output(output_stream);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
