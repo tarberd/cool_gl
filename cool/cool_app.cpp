@@ -66,6 +66,8 @@ CoolApp::CoolApp(int argc, char **argv) {
       [this]() { return cool_main_entry_changed(); });
   cool_main_entry_button->signal_clicked().connect(
       [this]() { return cool_main_entry_button_clicked(); });
+  cool_main_entry->signal_activate().connect(
+    [this]() { return cool_main_entry_button_clicked(); });
   cool_navigation_zoom_spin_button->signal_changed().connect(
       [this]() { return cool_navigation_zoom_spin_button_changed(); });
   cool_navigation_zoom_in_button->signal_clicked().connect(
@@ -106,7 +108,14 @@ CoolApp::CoolApp(int argc, char **argv) {
   cool_display_file_tree_view->set_model(object_list);
   cool_display_file_tree_view->append_column("Type", my_columns.column_type);
   cool_display_file_tree_view->append_column("Nome", my_columns.column_name);
+
+  // Create debbuging object
+  cool_main_entry->set_text("polygon test 10 10 10 20 20 20 20 10");
+  cool_main_entry_changed();
+  cool_main_entry_button_clicked();
 }
+
+
 
 bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   const double width = static_cast<double>(cool_drawing_area->get_width());
@@ -422,6 +431,7 @@ void CoolApp::cool_main_entry_button_clicked() {
   }
 
   print_to_cool_main_entry_text_view_output(output_stream);
+  cool_main_entry->set_text("");
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
