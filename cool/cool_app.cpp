@@ -3,13 +3,13 @@ namespace cool_app {
 
 void print_help(std::stringstream &out) {
   out << "Available commands:" << std::endl
-      << "\tpoint [name] [x] [y]" << std::endl
-      << "\tline [name] [begin_x] [begin_y] [end_x] [end_y]" << std::endl
-      << "\tpolygon [name] [list [[x] [y]] ...]" << std::endl
-      << "\ttranslate [name] [delta_x] [delta_y] [delta_z]" << std::endl
-      << "\tscale [name] [scale_x] [scale_y] [scale_z]" << std::endl
-      << "\trotate [name] [rad]" << std::endl
-      << "\ttransform [object_name] [list [transform_name] ...]" << std::endl;
+      << "\tpoint [object] [x] [y]" << std::endl
+      << "\tline [object] [begin_x] [begin_y] [end_x] [end_y]" << std::endl
+      << "\tpolygon [object] [list [[x] [y]] ...]" << std::endl
+      << "\ttranslate [object] [delta_x] [delta_y] [delta_z]" << std::endl
+      << "\tscale [object] [scale_x] [scale_y] [scale_z]" << std::endl
+      << "\trotate [object] [rad]" << std::endl
+      << "\trotate_at [object] [x] [y] [rad]" << std::endl;
 }
 
 void CoolApp::print_to_cool_main_entry_text_view_output(
