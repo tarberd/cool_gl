@@ -69,7 +69,7 @@ struct CoolApp {
 
   std::string create_drawable_entrie_string;
 
-  std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
+  std::vector<std::unique_ptr<cool_gl::Drawable>> display_file;
 
   ModelColumns my_columns;
   Glib::RefPtr<Gtk::ListStore> object_list;

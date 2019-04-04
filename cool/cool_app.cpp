@@ -99,7 +99,7 @@ CoolApp::CoolApp(int argc, char **argv) {
 
   object_list = Gtk::ListStore::create(my_columns);
 
-  for (const auto &drawable : drawable_vector) {
+  for (const auto &drawable : display_file) {
     auto row = *object_list->append();
     row[my_columns.column_type] = drawable->type();
     row[my_columns.column_name] = drawable->name();
@@ -130,7 +130,7 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   Vec viewport_begin = {0.0, 0.0, 1.0};
   Vec viewport_end = {width, height, 1.0};
 
-  for (const auto &drawable : drawable_vector) {
+  for (const auto &drawable : display_file) {
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
   }
 
@@ -208,7 +208,7 @@ void CoolApp::cool_main_entry_changed() {
 
 void CoolApp::apply_transform(const std::string &drawable_name,
                               const cool_gl::Matrix &transform) {
-  for (const auto &drawable : drawable_vector) {
+  for (const auto &drawable : display_file) {
     if (drawable->name() == drawable_name) {
       drawable->transform(transform);
     }
@@ -217,7 +217,7 @@ void CoolApp::apply_transform(const std::string &drawable_name,
 
 void CoolApp::apply_transform_on_mass_centre(const std::string &drawable_name,
                                              const cool_gl::Matrix &transform) {
-  for (const auto &drawable : drawable_vector) {
+  for (const auto &drawable : display_file) {
     if (drawable->name() == drawable_name) {
       auto mass_centre = drawable->mass_centre();
 
@@ -268,12 +268,12 @@ void CoolApp::cool_main_entry_button_clicked() {
     output_stream << std::endl;
 
     auto position = cool_gl::Vec{x, y, 1.0};
-    drawable_vector.emplace_back(new cool_gl::Point{
+    display_file.emplace_back(new cool_gl::Point{
         std::move(position), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
-    row[my_columns.column_type] = drawable_vector.back()->type();
-    row[my_columns.column_name] = drawable_vector.back()->name();
+    row[my_columns.column_type] = display_file.back()->type();
+    row[my_columns.column_name] = display_file.back()->name();
   } else if (command_string == "line") {
     std::string name;
 
@@ -301,13 +301,13 @@ void CoolApp::cool_main_entry_button_clicked() {
     auto begin = cool_gl::Vec{x_begin, y_begin, 1.0};
     auto end = cool_gl::Vec{x_end, y_end, 1.0};
 
-    drawable_vector.emplace_back(
+    display_file.emplace_back(
         new cool_gl::Line{std::move(begin), std::move(end),
                           cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
-    row[my_columns.column_type] = drawable_vector.back()->type();
-    row[my_columns.column_name] = drawable_vector.back()->name();
+    row[my_columns.column_type] = display_file.back()->type();
+    row[my_columns.column_name] = display_file.back()->name();
   } else if (command_string == "polygon") {
     std::string name;
 
@@ -332,12 +332,12 @@ void CoolApp::cool_main_entry_button_clicked() {
 
     output_stream << std::endl;
 
-    drawable_vector.emplace_back(new cool_gl::Polygon{
+    display_file.emplace_back(new cool_gl::Polygon{
         std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
-    row[my_columns.column_type] = drawable_vector.back()->type();
-    row[my_columns.column_name] = drawable_vector.back()->name();
+    row[my_columns.column_type] = display_file.back()->type();
+    row[my_columns.column_name] = display_file.back()->name();
   } else if (command_string == "translate") {
     std::string name;
 
