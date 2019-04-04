@@ -1,4 +1,14 @@
-add_library(cool_gl src/cool_gl.cpp)
+set(SRC
+    src/Drawable.cpp
+    src/Line.cpp
+    src/Matrix.cpp
+    src/Point.cpp
+    src/Polygon.cpp
+    src/Vec.cpp
+    src/Window.cpp
+)
+
+add_library(cool_gl ${SRC})
 
 target_include_directories(cool_gl PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
