@@ -55,7 +55,7 @@ Matrix create_rotate_transform(double rad) {
            {0.0, 0.0, 0.0, 1.0}}};
 }
 
-Matrix multiply(const Matrix &left, const Matrix &right) {
+Matrix multiply(const Matrix &right, const Matrix &left) {
   Matrix result;
 
   int N = left.size();

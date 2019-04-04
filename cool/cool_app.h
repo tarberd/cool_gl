@@ -71,8 +71,6 @@ struct CoolApp {
 
   std::vector<std::unique_ptr<cool_gl::Drawable>> drawable_vector;
 
-  std::map<std::string, cool_gl::Matrix> name_to_transform;
-
   ModelColumns my_columns;
   Glib::RefPtr<Gtk::ListStore> object_list;
 
@@ -89,6 +87,10 @@ struct CoolApp {
   void cool_main_entry_changed();
   void cool_main_entry_button_clicked();
   void print_to_cool_main_entry_text_view_output(std::stringstream &out);
+  void apply_transform(const std::string &drawable_name,
+                       const cool_gl::Matrix &transform);
+  void apply_transform_on_mass_centre(const std::string &drawable_name,
+                                      const cool_gl::Matrix &transform);
   int run();
   };
 
