@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cool_gl/Vec.h>
 #include <stdexcept>
 
@@ -31,6 +32,15 @@ double &Vec::operator[](int index) {
   default:
     throw std::out_of_range("Vec::operator[] out off bounds");
   }
+}
+
+double angle(const Vec &left, const Vec &right) noexcept {
+  auto magnitude_left = std::sqrt(std::pow(left.x, 2) + std::pow(left.y, 2));
+  auto magnitude_right = std::sqrt(std::pow(right.x, 2) + std::pow(right.y, 2));
+
+  auto dotproduct = left.x * right.x + left.y * right.y;
+
+  return std::acos(dotproduct / (magnitude_left * magnitude_right));
 }
 
 } // namespace cool_gl

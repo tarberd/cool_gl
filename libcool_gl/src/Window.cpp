@@ -15,11 +15,12 @@ Window::display_file_type Window::create_normalized_display_file(
     auto translate_to_window_centre_transform =
         create_translate_transform(centre.x, centre.y, centre.z);
 
-    auto scale_transform =
-        create_scale_transform(1.0 / width, 1.0 / height, 1.0);
+    auto window_angle = angle(view_up, {0.0, 1.0});
+    auto rotate_world_to_window_up =
+        create_rotate_transform(-1.0 * window_angle);
 
-    auto result_transform =
-        multiply(translate_to_window_centre_transform, scale_transform);
+    auto result_transform = multiply(translate_to_window_centre_transform,
+                                     rotate_world_to_window_up);
 
     copy->transform(result_transform);
 

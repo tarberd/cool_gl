@@ -19,6 +19,8 @@ struct Vec {
 
   const double &operator[](int x) const;
   double &operator[](int x);
+
 };
 
+double angle(const Vec &left, const Vec &right) noexcept;
 } // namespace cool_gl
