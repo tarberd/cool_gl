@@ -2,6 +2,8 @@
 
 namespace cool_gl {
 
+Drawable *Polygon::copy() const noexcept { return new Polygon{*this}; }
+
 void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
                    Vec window_max, Vec viewport_min, Vec viewport_max) const {
   cr->set_line_width(10.0);

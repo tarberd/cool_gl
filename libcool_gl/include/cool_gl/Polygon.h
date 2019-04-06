@@ -15,6 +15,10 @@ struct Polygon : public Drawable {
   Polygon() = delete;
   Polygon(const Polygon &) = default;
   Polygon(Polygon &&) = default;
+  Polygon &operator=(const Polygon &) = default;
+  Polygon &operator=(Polygon &&) = default;
+
+  Drawable *copy() const noexcept;
 
   template <class A, class B, class C>
   Polygon(A &&points, B &&colour, C &&name) noexcept

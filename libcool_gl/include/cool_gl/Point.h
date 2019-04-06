@@ -13,6 +13,10 @@ struct Point : public Drawable {
   Point() = delete;
   Point(const Point &) = default;
   Point(Point &&) = default;
+  Point &operator=(const Point &) = default;
+  Point &operator=(Point &&) = default;
+
+  Drawable *copy() const noexcept;
 
   template <class A, class B, class C>
   Point(A &&position, B &&colour, C &&name) noexcept

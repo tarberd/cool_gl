@@ -8,7 +8,9 @@
 namespace cool_gl {
 
 struct Drawable {
-  virtual ~Drawable();
+  virtual ~Drawable() = default;
+
+  virtual Drawable *copy() const noexcept = 0;
 
   virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
                     Vec window_max, Vec viewport_min,

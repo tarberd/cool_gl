@@ -2,6 +2,8 @@
 
 namespace cool_gl {
 
+Drawable *Line::copy() const noexcept { return new Line{*this}; }
+
 void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
                 Vec window_max, Vec viewport_min, Vec viewport_max) const {
   cr->set_line_width(10.0);

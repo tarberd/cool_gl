@@ -2,6 +2,4 @@
 
 namespace cool_gl {
 
-Drawable::~Drawable(){};
-
 }

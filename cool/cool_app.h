@@ -69,6 +69,7 @@ struct CoolApp {
 
   std::string create_drawable_entrie_string;
 
+  cool_gl::Window window{50, 50, {0.0, 0.0}, {0.0, 1.0}};
   std::vector<std::unique_ptr<cool_gl::Drawable>> display_file;
 
   ModelColumns my_columns;

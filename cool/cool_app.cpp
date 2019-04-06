@@ -130,7 +130,10 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   Vec viewport_begin = {0.0, 0.0, 1.0};
   Vec viewport_end = {width, height, 1.0};
 
-  for (const auto &drawable : display_file) {
+  auto normalized_display_file =
+      window.create_normalized_display_file(display_file);
+
+  for (const auto &drawable : normalized_display_file) {
     drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
   }
 

@@ -16,6 +16,10 @@ struct Line : public Drawable {
   Line() = default;
   Line(const Line &) = default;
   Line(Line &&) = default;
+  Line &operator=(const Line &) = default;
+  Line &operator=(Line &&) = default;
+
+  Drawable *copy() const noexcept;
 
   template <class A, class B, class C, class D>
   Line(A &&begin, B &&end, C &&colour, D &&name) noexcept
