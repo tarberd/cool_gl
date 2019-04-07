@@ -77,9 +77,6 @@ struct CoolApp {
   double zoom_factor = 0;
   double rotate_factor = 0;
 
-  cool_gl::Vec window_begin = {-50.0, -50.0};
-  cool_gl::Vec window_end = {50.0, 50.0};
-
   std::string create_drawable_entrie_string;
 
   cool_gl::Window window{100, 100, {0.0, 0.0}, {0.0, 1.0}};
