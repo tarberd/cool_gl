@@ -9,20 +9,30 @@ Window::display_file_type Window::create_normalized_display_file(
     const Window::display_file_type &display_file) noexcept {
 
   auto normalized_display_file = Window::display_file_type{};
+
+  auto world_to_window_centre = cool_gl::create_translate_transform(
+      -1.0 * centre.x, -1.0 * centre.y, -1.0 * centre.z);
+
+  auto world_from_window_centre =
+      cool_gl::create_translate_transform(centre.x, centre.y, centre.z);
+
+  auto world_up = Vec{0.0, 1.0};
+  auto window_angle = angle(view_up, {0.0, 1.0});
+
+  auto rotate_world_to_window_up = create_rotate_transform(window_angle);
+  if (view_up.x <= 0.0) {
+    rotate_world_to_window_up = create_rotate_transform(-1.0 * window_angle);
+  }
+
+  auto final_transform =
+      cool_gl::multiply(world_to_window_centre, rotate_world_to_window_up);
+  final_transform =
+      cool_gl::multiply(final_transform, world_from_window_centre);
+
   for (const auto &drawable : display_file) {
     auto copy = drawable->copy();
 
-    auto translate_to_window_centre_transform =
-        create_translate_transform(centre.x, centre.y, centre.z);
-
-    auto window_angle = angle(view_up, {0.0, 1.0});
-    auto rotate_world_to_window_up =
-        create_rotate_transform(-1.0 * window_angle);
-
-    auto result_transform = multiply(translate_to_window_centre_transform,
-                                     rotate_world_to_window_up);
-
-    copy->transform(result_transform);
+    copy->transform(final_transform);
 
     normalized_display_file.emplace_back(copy);
   }

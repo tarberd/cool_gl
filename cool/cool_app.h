@@ -59,17 +59,30 @@ struct CoolApp {
   const char *cool_navigation_button_right_id = "cool_navigation_button_right";
   Gtk::Button *cool_navigation_button_right;
 
+  const char *cool_navigation_rotate_spin_button_id =
+      "cool_navigation_rotate_spin_button";
+  Gtk::SpinButton *cool_navigation_rotate_spin_button;
+
+  const char *cool_navigation_rotate_left_button_id =
+      "cool_navigation_rotate_left_button";
+  Gtk::Button *cool_navigation_rotate_left_button;
+
+  const char *cool_navigation_rotate_right_button_id =
+      "cool_navigation_rotate_right_button";
+  Gtk::Button *cool_navigation_rotate_right_button;
+
   const double ZOOM_FACTOR = 1.0;
   const double MOVE_FACTOR = 1.0;
 
-  int zoom_factor = 0;
+  double zoom_factor = 0;
+  double rotate_factor = 0;
 
   cool_gl::Vec window_begin = {-50.0, -50.0};
   cool_gl::Vec window_end = {50.0, 50.0};
 
   std::string create_drawable_entrie_string;
 
-  cool_gl::Window window{50, 50, {0.0, 0.0}, {1.0, 1.0}};
+  cool_gl::Window window{100, 100, {0.0, 0.0}, {0.0, 1.0}};
   std::vector<std::unique_ptr<cool_gl::Drawable>> display_file;
 
   ModelColumns my_columns;
@@ -78,13 +91,16 @@ struct CoolApp {
   CoolApp(int argc, char **argv);
 
   bool cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr);
-  void cool_navigation_button_down_clicked();
-  void cool_navigation_button_up_clicked();
-  void cool_navigation_button_right_clicked();
-  void cool_navigation_button_left_clicked();
+  void cool_navigation_move_down_button_clicked();
+  void cool_navigation_move_up_button_clicked();
+  void cool_navigation_move_right_button_clicked();
+  void cool_navigation_move_left_button_clicked();
   void cool_navigation_zoom_out_button_clicked();
   void cool_navigation_zoom_in_button_clicked();
   void cool_navigation_zoom_spin_button_changed();
+  void cool_navigation_rotate_left_button_clicked();
+  void cool_navigation_rotate_right_button_clicked();
+  void cool_navigation_rotate_spin_button_changed();
   void cool_main_entry_changed();
   void cool_main_entry_button_clicked();
   void print_to_cool_main_entry_text_view_output(std::stringstream &out);

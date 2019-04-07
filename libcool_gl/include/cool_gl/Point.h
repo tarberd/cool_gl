@@ -23,8 +23,8 @@ struct Point : public Drawable {
       : position{std::forward<A>(position)}, colour{std::forward<B>(colour)},
         m_name{std::forward<C>(name)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
-            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Window window,
+            Vec viewport_min, Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
 

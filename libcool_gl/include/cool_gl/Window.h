@@ -7,6 +7,8 @@
 
 namespace cool_gl {
 
+struct Drawable;
+
 struct Window {
   using display_file_type = std::vector<std::unique_ptr<cool_gl::Drawable>>;
 

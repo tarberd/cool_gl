@@ -58,6 +58,12 @@ CoolApp::CoolApp(int argc, char **argv) {
                           cool_navigation_button_up);
   gtk_builder->get_widget(cool_navigation_button_right_id,
                           cool_navigation_button_right);
+  gtk_builder->get_widget(cool_navigation_rotate_spin_button_id,
+                          cool_navigation_rotate_spin_button);
+  gtk_builder->get_widget(cool_navigation_rotate_left_button_id,
+                          cool_navigation_rotate_left_button);
+  gtk_builder->get_widget(cool_navigation_rotate_right_button_id,
+                          cool_navigation_rotate_right_button);
 
   // Connect signal
   cool_drawing_area->signal_draw().connect(
@@ -75,22 +81,34 @@ CoolApp::CoolApp(int argc, char **argv) {
   cool_navigation_zoom_out_button->signal_clicked().connect(
       [this]() { return cool_navigation_zoom_out_button_clicked(); });
   cool_navigation_button_left->signal_clicked().connect(
-      [this]() { return cool_navigation_button_left_clicked(); });
+      [this]() { return cool_navigation_move_left_button_clicked(); });
   cool_navigation_button_down->signal_clicked().connect(
-      [this]() { return cool_navigation_button_down_clicked(); });
+      [this]() { return cool_navigation_move_down_button_clicked(); });
   cool_navigation_button_up->signal_clicked().connect(
-      [this]() { return cool_navigation_button_up_clicked(); });
+      [this]() { return cool_navigation_move_up_button_clicked(); });
   cool_navigation_button_right->signal_clicked().connect(
-      [this]() { return cool_navigation_button_right_clicked(); });
+      [this]() { return cool_navigation_move_right_button_clicked(); });
+  cool_navigation_rotate_spin_button->signal_changed().connect(
+      [this]() { return cool_navigation_rotate_spin_button_changed(); });
+  cool_navigation_rotate_left_button->signal_clicked().connect(
+      [this]() { return cool_navigation_rotate_left_button_clicked(); });
+  cool_navigation_rotate_right_button->signal_clicked().connect(
+      [this]() { return cool_navigation_rotate_right_button_clicked(); });
 
   // Drawin Area
   cool_drawing_area->show();
 
-  // Spin Button
+  // Zoom Spin Button
   cool_navigation_zoom_spin_button->set_digits(3);
   cool_navigation_zoom_spin_button->set_range(1, 100);
   cool_navigation_zoom_spin_button->set_increments(1, 100);
   cool_navigation_zoom_spin_button->set_value(1);
+
+  // Rotate Spin Button
+  cool_navigation_rotate_spin_button->set_digits(3);
+  cool_navigation_rotate_spin_button->set_range(0, 4);
+  cool_navigation_rotate_spin_button->set_increments(0.15, 1.0);
+  cool_navigation_rotate_spin_button->set_value(0.15);
 
   // Print Help to text view
   std::stringstream out;
@@ -98,6 +116,13 @@ CoolApp::CoolApp(int argc, char **argv) {
   print_to_cool_main_entry_text_view_output(out);
 
   object_list = Gtk::ListStore::create(my_columns);
+
+  display_file.emplace_back(
+      new cool_gl::Line{cool_gl::Vec{0.0, -100.0}, cool_gl::Vec{0.0, 100.0},
+                        cool_gl::Colour{1.0, 0.0, 0.0}, "x_line"});
+  display_file.emplace_back(
+      new cool_gl::Line{cool_gl::Vec{100.0, 0.0}, cool_gl::Vec{-100.0, 0.0},
+                        cool_gl::Colour{1.0, 0.0, 0.0}, "x_line"});
 
   for (const auto &drawable : display_file) {
     auto row = *object_list->append();
@@ -118,8 +143,6 @@ CoolApp::CoolApp(int argc, char **argv) {
 #endif
 }
 
-
-
 bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   const double width = static_cast<double>(cool_drawing_area->get_width());
   const double height = static_cast<double>(cool_drawing_area->get_height());
@@ -134,42 +157,38 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
       window.create_normalized_display_file(display_file);
 
   for (const auto &drawable : normalized_display_file) {
-    drawable->draw(cr, window_begin, window_end, viewport_begin, viewport_end);
+    drawable->draw(cr, window, viewport_begin, viewport_end);
   }
 
   return true;
 }
 
-void CoolApp::cool_navigation_button_down_clicked() {
-  window_begin.y -= MOVE_FACTOR;
-  window_end.y -= MOVE_FACTOR;
+void CoolApp::cool_navigation_move_down_button_clicked() {
+  window.centre.y -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::cool_navigation_button_up_clicked() {
-  window_begin.y += MOVE_FACTOR;
-  window_end.y += MOVE_FACTOR;
+void CoolApp::cool_navigation_move_up_button_clicked() {
+  window.centre.y += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::cool_navigation_button_right_clicked() {
-  window_begin.x += MOVE_FACTOR;
-  window_end.x += MOVE_FACTOR;
+void CoolApp::cool_navigation_move_right_button_clicked() {
+  window.centre.x += MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
   cool_drawing_area->queue_draw();
 }
 
-void CoolApp::cool_navigation_button_left_clicked() {
-  window_begin.x -= MOVE_FACTOR;
-  window_end.x -= MOVE_FACTOR;
+void CoolApp::cool_navigation_move_left_button_clicked() {
+  window.centre.x -= MOVE_FACTOR;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -177,11 +196,8 @@ void CoolApp::cool_navigation_button_left_clicked() {
 }
 
 void CoolApp::cool_navigation_zoom_out_button_clicked() {
-  window_begin.x -= zoom_factor;
-  window_begin.y -= zoom_factor;
-
-  window_end.x += zoom_factor;
-  window_end.y += zoom_factor;
+  window.height -= zoom_factor;
+  window.width -= zoom_factor;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -189,11 +205,28 @@ void CoolApp::cool_navigation_zoom_out_button_clicked() {
 }
 
 void CoolApp::cool_navigation_zoom_in_button_clicked() {
-  window_begin.x += zoom_factor;
-  window_begin.y += zoom_factor;
+  window.height += zoom_factor;
+  window.width += zoom_factor;
 
-  window_end.x -= zoom_factor;
-  window_end.y -= zoom_factor;
+  cool_drawing_area->signal_draw().connect(
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
+  cool_drawing_area->queue_draw();
+}
+
+void CoolApp::cool_navigation_rotate_left_button_clicked() {
+  auto rotate = cool_gl::create_rotate_transform(-1.0 * rotate_factor);
+
+  window.view_up = cool_gl::multiply(rotate, window.view_up);
+
+  cool_drawing_area->signal_draw().connect(
+      sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
+  cool_drawing_area->queue_draw();
+}
+
+void CoolApp::cool_navigation_rotate_right_button_clicked() {
+  auto rotate = cool_gl::create_rotate_transform(rotate_factor);
+
+  window.view_up = cool_gl::multiply(rotate, window.view_up);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -201,7 +234,11 @@ void CoolApp::cool_navigation_zoom_in_button_clicked() {
 }
 
 void CoolApp::cool_navigation_zoom_spin_button_changed() {
-  zoom_factor = cool_navigation_zoom_spin_button->get_value_as_int();
+  zoom_factor = cool_navigation_zoom_spin_button->get_value();
+}
+
+void CoolApp::cool_navigation_rotate_spin_button_changed() {
+  rotate_factor = cool_navigation_rotate_spin_button->get_value();
 }
 
 void CoolApp::cool_main_entry_changed() {

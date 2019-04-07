@@ -2,19 +2,20 @@
 
 #include <cool_gl/Matrix.h>
 #include <cool_gl/Vec.h>
+#include <cool_gl/Window.h>
 #include <gtkmm.h>
 #include <string>
 
 namespace cool_gl {
+struct Window;
 
 struct Drawable {
   virtual ~Drawable() = default;
 
   virtual Drawable *copy() const noexcept = 0;
 
-  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
-                    Vec window_max, Vec viewport_min,
-                    Vec viewport_max) const = 0;
+  virtual void draw(const Cairo::RefPtr<Cairo::Context> &cr, Window window,
+                    Vec viewport_min, Vec viewport_max) const = 0;
 
   virtual void transform(const Matrix &transform) noexcept = 0;
 
