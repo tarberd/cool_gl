@@ -164,7 +164,8 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 }
 
 void CoolApp::cool_navigation_move_down_button_clicked() {
-  window.centre.y -= MOVE_FACTOR;
+  window.move_up(-1.0 * MOVE_FACTOR);
+  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -172,7 +173,8 @@ void CoolApp::cool_navigation_move_down_button_clicked() {
 }
 
 void CoolApp::cool_navigation_move_up_button_clicked() {
-  window.centre.y += MOVE_FACTOR;
+  window.move_up(MOVE_FACTOR);
+  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -180,7 +182,7 @@ void CoolApp::cool_navigation_move_up_button_clicked() {
 }
 
 void CoolApp::cool_navigation_move_right_button_clicked() {
-  window.centre.x += MOVE_FACTOR;
+  window.move_right(MOVE_FACTOR);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -188,7 +190,7 @@ void CoolApp::cool_navigation_move_right_button_clicked() {
 }
 
 void CoolApp::cool_navigation_move_left_button_clicked() {
-  window.centre.x -= MOVE_FACTOR;
+  window.move_right(-1.0 * MOVE_FACTOR);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -217,6 +219,8 @@ void CoolApp::cool_navigation_rotate_left_button_clicked() {
   auto rotate = cool_gl::create_rotate_transform(-1.0 * rotate_factor);
 
   window.view_up = cool_gl::multiply(rotate, window.view_up);
+  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
+  window.view_right = cool_gl::multiply(rotate, window.view_right);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -227,6 +231,7 @@ void CoolApp::cool_navigation_rotate_right_button_clicked() {
   auto rotate = cool_gl::create_rotate_transform(rotate_factor);
 
   window.view_up = cool_gl::multiply(rotate, window.view_up);
+  window.view_right = cool_gl::multiply(rotate, window.view_right);
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));

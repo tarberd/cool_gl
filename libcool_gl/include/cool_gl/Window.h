@@ -18,15 +18,20 @@ struct Window {
   Window &operator=(const Window &) = default;
   Window &operator=(Window &&) = default;
 
-  Window(double height, double width, Vec centre, Vec view_up) noexcept;
+  Window(double height, double width, Vec centre, Vec view_up,
+         Vec view_right) noexcept;
 
   display_file_type create_normalized_display_file(
       const display_file_type &display_file) noexcept;
+
+  void move_up(double step) noexcept;
+  void move_right(double step) noexcept;
 
   double height;
   double width;
   Vec centre;
   Vec view_up;
+  Vec view_right;
 };
 
 } // namespace cool_gl

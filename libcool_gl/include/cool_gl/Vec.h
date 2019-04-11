@@ -23,4 +23,5 @@ struct Vec {
 };
 
 double angle(const Vec &left, const Vec &right) noexcept;
+
 } // namespace cool_gl

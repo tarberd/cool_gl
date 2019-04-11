@@ -2,8 +2,20 @@
 
 namespace cool_gl {
 
-Window::Window(double height, double width, Vec centre, Vec view_up) noexcept
-    : height{height}, width{width}, centre{centre}, view_up{view_up} {}
+Window::Window(double height, double width, Vec centre, Vec view_up,
+               Vec view_right) noexcept
+    : height{height}, width{width}, centre{centre}, view_up{view_up},
+      view_right{view_right} {}
+
+void Window::move_up(double step) noexcept {
+  centre.x = centre.x + view_up.x * step;
+  centre.y = centre.y + view_up.y * step;
+}
+
+void Window::move_right(double step) noexcept {
+  centre.x = centre.x + view_right.x * step;
+  centre.y = centre.y + view_right.y * step;
+}
 
 Window::display_file_type Window::create_normalized_display_file(
     const Window::display_file_type &display_file) noexcept {
@@ -19,9 +31,9 @@ Window::display_file_type Window::create_normalized_display_file(
   auto world_up = Vec{0.0, 1.0};
   auto window_angle = angle(view_up, {0.0, 1.0});
 
-  auto rotate_world_to_window_up = create_rotate_transform(window_angle);
+  auto rotate_world_to_window_up = create_rotate_transform(-1.0 * window_angle);
   if (view_up.x <= 0.0) {
-    rotate_world_to_window_up = create_rotate_transform(-1.0 * window_angle);
+    rotate_world_to_window_up = create_rotate_transform(window_angle);
   }
 
   auto final_transform =
