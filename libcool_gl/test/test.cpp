@@ -2,6 +2,7 @@
 #include <catch2/catch.hpp>
 
 #include <cool_gl/cool_gl.h>
+#include <iostream>
 
 using namespace cool_gl;
 

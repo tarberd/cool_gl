@@ -4,16 +4,14 @@ namespace cool_gl {
 
 Drawable *Polygon::copy() const noexcept { return new Polygon{*this}; }
 
-void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Window window,
-                   Vec viewport_min, Vec viewport_max) const {
+void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
+                   Vec viewport_max) const {
   cr->set_line_width(10.0);
 
   cr->set_source_rgb(colour.r, colour.g, colour.b);
 
-  auto window_min = Vec{window.centre.x - (window.width / 2.0),
-                        window.centre.y - (window.height / 2.0)};
-  auto window_max = Vec{window.centre.x + (window.width / 2.0),
-                        window.centre.y + (window.height / 2.0)};
+  auto window_min = Vec{-1.0, -1.0};
+  auto window_max = Vec{1.0, 1.0};
 
   for (int i = 0; i < points.size(); i++) {
 

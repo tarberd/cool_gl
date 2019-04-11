@@ -29,8 +29,8 @@ struct Line : public Drawable {
         colour{std::forward<C>(colour)}, m_name{std::forward<D>(name)},
         width{width} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Window window,
-            Vec viewport_min, Vec viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
+            Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
 

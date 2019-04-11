@@ -157,7 +157,7 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
       window.create_normalized_display_file(display_file);
 
   for (const auto &drawable : normalized_display_file) {
-    drawable->draw(cr, window, viewport_begin, viewport_end);
+    drawable->draw(cr, viewport_begin, viewport_end);
   }
 
   return true;
@@ -165,7 +165,6 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 
 void CoolApp::cool_navigation_move_down_button_clicked() {
   window.move_up(-1.0 * MOVE_FACTOR);
-  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -174,7 +173,6 @@ void CoolApp::cool_navigation_move_down_button_clicked() {
 
 void CoolApp::cool_navigation_move_up_button_clicked() {
   window.move_up(MOVE_FACTOR);
-  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -219,7 +217,6 @@ void CoolApp::cool_navigation_rotate_left_button_clicked() {
   auto rotate = cool_gl::create_rotate_transform(-1.0 * rotate_factor);
 
   window.view_up = cool_gl::multiply(rotate, window.view_up);
-  std::cout << window.view_up.x << " " << window.view_up.y << std::endl;
   window.view_right = cool_gl::multiply(rotate, window.view_right);
 
   cool_drawing_area->signal_draw().connect(
