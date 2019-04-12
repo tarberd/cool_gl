@@ -29,7 +29,9 @@ struct Window {
 
   double height;
   double width;
+
   Vec centre;
+
   Vec view_up;
   Vec view_right;
 };
