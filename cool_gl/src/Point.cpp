@@ -1,6 +1,5 @@
 #include <cool_gl/Point.h>
 
-#include <iostream>
 namespace cool_gl {
 
 Drawable *Point::copy() const noexcept { return new Point{*this}; }
@@ -20,8 +19,6 @@ void Point::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   transformed_point.y =
       (1 - (position.y - window_min.y) / (window_max.y - window_min.y)) *
       (viewport_max.y - viewport_min.y);
-
-  std::cout << position.x << " " << position.y << std::endl;
 
   cr->set_source_rgb(colour.r, colour.g, colour.b);
   cr->move_to(transformed_point.x, transformed_point.y);
