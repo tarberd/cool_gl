@@ -36,3 +36,8 @@ enable_testing()
 
 add_subdirectory(cool_gl)
 add_subdirectory(cool)
+
+option(VK_COOL = off)
+if(VK_COOL)
+    add_subdirectory(vk_cool)
+endif()
