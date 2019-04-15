@@ -13,14 +13,18 @@ struct Point : public Drawable {
   Point() = delete;
   Point(const Point &) = default;
   Point(Point &&) = default;
+  Point &operator=(const Point &) = default;
+  Point &operator=(Point &&) = default;
+
+  Drawable *copy() const noexcept;
 
   template <class A, class B, class C>
   Point(A &&position, B &&colour, C &&name) noexcept
       : position{std::forward<A>(position)}, colour{std::forward<B>(colour)},
         m_name{std::forward<C>(name)} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
-            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
+            Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
 

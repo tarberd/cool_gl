@@ -2,12 +2,17 @@
 
 namespace cool_gl {
 
-void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
-                Vec window_max, Vec viewport_min, Vec viewport_max) const {
-  cr->set_line_width(10.0);
+Drawable *Line::copy() const noexcept { return new Line{*this}; }
+
+void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
+                Vec viewport_max) const {
+  cr->set_line_width(width);
 
   Vec transformed_begin;
   Vec transformed_end;
+
+  auto window_min = Vec{-1.0, -1.0};
+  auto window_max = Vec{1.0, 1.0};
 
   transformed_begin.x = (begin.x - window_min.x) /
                         (window_max.x - window_min.x) *

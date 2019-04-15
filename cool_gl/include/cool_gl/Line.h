@@ -13,17 +13,24 @@ struct Line : public Drawable {
 
   std::string m_name;
 
+  double width;
+
   Line() = default;
   Line(const Line &) = default;
   Line(Line &&) = default;
+  Line &operator=(const Line &) = default;
+  Line &operator=(Line &&) = default;
+
+  Drawable *copy() const noexcept;
 
   template <class A, class B, class C, class D>
-  Line(A &&begin, B &&end, C &&colour, D &&name) noexcept
+  Line(A &&begin, B &&end, C &&colour, D &&name, double width = 1.0) noexcept
       : begin{std::forward<A>(begin)}, end{std::forward<B>(end)},
-        colour{std::forward<C>(colour)}, m_name{std::forward<D>(name)} {}
+        colour{std::forward<C>(colour)}, m_name{std::forward<D>(name)},
+        width{width} {}
 
-  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec window_min,
-            Vec window_max, Vec viewport_min, Vec viewport_max) const final;
+  void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
+            Vec viewport_max) const final;
 
   void transform(const Matrix &transform) noexcept;
 

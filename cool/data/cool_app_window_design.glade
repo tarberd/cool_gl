@@ -218,7 +218,7 @@
                                         <property name="column_homogeneous">True</property>
                                         <child>
                                           <object class="GtkButton" id="cool_navigation_button_down">
-                                            <property name="label" translatable="yes">\/</property>
+                                            <property name="label" translatable="yes">🢃</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -230,7 +230,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="cool_navigation_button_up">
-                                            <property name="label" translatable="yes">/\</property>
+                                            <property name="label" translatable="yes">🢁</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -242,7 +242,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="cool_navigation_button_left">
-                                            <property name="label" translatable="yes">&lt;</property>
+                                            <property name="label" translatable="yes">🢀</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -254,7 +254,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="cool_navigation_button_right">
-                                            <property name="label" translatable="yes">&gt;</property>
+                                            <property name="label" translatable="yes">🢂</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -293,6 +293,85 @@
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="cool_navigation_rotate_frame">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">in</property>
+                            <child>
+                              <object class="GtkAlignment" id="cool_navigation_rotate_alignmet">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="top_padding">8</property>
+                                <property name="bottom_padding">8</property>
+                                <property name="left_padding">8</property>
+                                <property name="right_padding">8</property>
+                                <child>
+                                  <object class="GtkBox" id="box_11">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="cool_navigation_rotate_spin_button">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="max_length">6</property>
+                                        <property name="text" translatable="yes">0.0000</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="climb_rate">1</property>
+                                        <property name="digits">6</property>
+                                        <property name="value">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="cool_navigation_rotate_left_button">
+                                        <property name="label" translatable="yes">⭯</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="cool_navigation_rotate_right_button">
+                                        <property name="label" translatable="yes">⭮</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel" id="cool_navigation_rotate_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Rotate</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>

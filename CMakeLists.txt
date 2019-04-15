@@ -1,37 +1,38 @@
 cmake_minimum_required(VERSION 3.7.2)
 
+###############################################################################
+# Set default CMAKE_BUILD_TYPE
+###############################################################################
+if(NOT CMAKE_BUILD_TYPE)
+    set(default_build_type "Release")
+    string(CONCAT message
+        "Setting CMAKE_BUILD_TYPE to '${default_build_type}' "
+        "as none was specified."
+    )
+    message(STATUS ${message})
+    string(CONCAT out
+        "Choose the type of build, options are: "
+        "None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) "
+        "Debug Release RelWithDebInfo MinSizeRel."
+    )
+    set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING ${out} FORCE)
+endif()
+
+###############################################################################
+# Create Project
+###############################################################################
 project(cool_gl VERSION 0.0.1)
 
-set(CMAKE_CXX_STANDARD 11)
+set(as_subproject cool_gl cool)
 
-find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
-link_directories(${GTKMM_LIBRARY_DIRS})
-include_directories(${GTKMM_INCLUDE_DIRS})
+macro(find_package)
+    if(NOT ${ARGV0} IN_LIST as_subproject)
+        _find_package(${ARGV})
+    endif()
+endmacro()
 
-add_subdirectory(libcool_gl)
+# Must enable test to use ctest
+enable_testing()
+
+add_subdirectory(cool_gl)
 add_subdirectory(cool)
-
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
-
-install(EXPORT ${PROJECT_NAME}-targets
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake
-    FILE ${PROJECT_NAME}-targets.cmake
-    NAMESPACE ${PROJECT_NAME}::
-)
-
-write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
-    COMPATIBILITY SameMajorVersion
-)
-
-install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake
-)
-
-install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/cmake
-)
