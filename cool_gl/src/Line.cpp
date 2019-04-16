@@ -11,8 +11,9 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   Vec transformed_begin;
   Vec transformed_end;
 
-  auto window_min = Vec{-1.0, -1.0};
-  auto window_max = Vec{1.0, 1.0};
+  double offset = 0.15;
+  auto window_min = Vec{-1.0 - offset, -1.0 - offset};
+  auto window_max = Vec{1.0 + offset, 1.0 + offset};
 
   transformed_begin.x = (begin.x - window_min.x) /
                         (window_max.x - window_min.x) *
