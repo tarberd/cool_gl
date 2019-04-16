@@ -7,6 +7,7 @@ namespace cool_gl {
 
 struct Polygon : public Drawable {
   std::vector<Vec> points;
+  double width;
 
   Colour colour;
 
@@ -21,9 +22,9 @@ struct Polygon : public Drawable {
   Drawable *copy() const noexcept;
 
   template <class A, class B, class C>
-  Polygon(A &&points, B &&colour, C &&name) noexcept
+  Polygon(A &&points, B &&colour, C &&name, double width = 1.0) noexcept
       : points{std::forward<A>(points)}, colour{std::forward<B>(colour)},
-        m_name{std::forward<C>(name)} {}
+        m_name{std::forward<C>(name)}, width{width} {}
 
   void draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
             Vec viewport_max) const final;

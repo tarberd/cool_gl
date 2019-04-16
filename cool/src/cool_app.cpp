@@ -150,11 +150,18 @@ bool CoolApp::cool_drawing_area_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   using cool_gl::Matrix;
   using cool_gl::Vec;
 
-  Vec viewport_begin = {0.0, 0.0, 1.0};
-  Vec viewport_end = {width, height, 1.0};
+  Vec viewport_begin = {0.0, 0.0};
+  Vec viewport_end = {width, height};
 
   auto normalized_display_file =
       window.create_normalized_display_file(display_file);
+
+  auto window_frame =
+      cool_gl::Polygon{std::vector{cool_gl::Vec{-1, -1}, cool_gl::Vec{-1, 1},
+                                   cool_gl::Vec{1, 1}, cool_gl::Vec{1, -1}},
+                       cool_gl::Colour{0.0, 0.0, 1.0}, "window_frame"};
+
+  window_frame.draw(cr, viewport_begin, viewport_end);
 
   for (const auto &drawable : normalized_display_file) {
     drawable->draw(cr, viewport_begin, viewport_end);

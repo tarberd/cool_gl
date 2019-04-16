@@ -10,8 +10,9 @@ void Point::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
 
   Vec transformed_point;
 
-  auto window_min = Vec{-1.0, -1.0};
-  auto window_max = Vec{1.0, 1.0};
+  double offset = 0.15;
+  auto window_min = Vec{-1.0 - offset, -1.0 - offset};
+  auto window_max = Vec{1.0 + offset, 1.0 + offset};
 
   transformed_point.x = (position.x - window_min.x) /
                         (window_max.x - window_min.x) *

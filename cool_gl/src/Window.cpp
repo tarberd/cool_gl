@@ -11,13 +11,11 @@ Window::Window(double height, double width, Vec centre, Vec view_up,
 void Window::move_up(double step) noexcept {
   centre.x = centre.x + view_up.x * step;
   centre.y = centre.y + view_up.y * step;
-  std::cout << "centre: " << centre.x << " " << centre.y << std::endl;
 }
 
 void Window::move_right(double step) noexcept {
   centre.x = centre.x + view_right.x * step;
   centre.y = centre.y + view_right.y * step;
-  std::cout << "centre: " << centre.x << " " << centre.y << std::endl;
 }
 
 Window::display_file_type Window::create_normalized_display_file(
