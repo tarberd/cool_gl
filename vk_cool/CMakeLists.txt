@@ -25,7 +25,7 @@ project(vk_cool VERSION 0.0.1)
 
 find_package(Vulkan REQUIRED)
 find_package(glfw3 3.2 REQUIRED)
-
+find_package(glm REQUIRED)
 
 find_package(cool_gl REQUIRED)
 
@@ -34,21 +34,10 @@ set(target_name vk_cool)
 ###############################################################################
 # Create Target
 ###############################################################################
-add_custom_command(
-    OUTPUT vert.spv
-    COMMAND glslangValidator -V ${PROJECT_SOURCE_DIR}/src/shader.vert -o ${PROJECT_BINARY_DIR}/vert.spv
-)
-
-add_custom_command(
-    OUTPUT frag.spv
-    COMMAND glslangValidator -V ${PROJECT_SOURCE_DIR}/src/shader.frag -o ${PROJECT_BINARY_DIR}/frag.spv
-    DEPENDS ${PROJECT_BINARY_DIR}/vert.spv
-)
-
 add_custom_target(
-    shaders
-    DEPENDS ${PROJECT_BINARY_DIR}/vert.spv
-    DEPENDS ${PROJECT_BINARY_DIR}/frag.spv
+    shaders ALL
+    COMMAND glslangValidator -V ${PROJECT_SOURCE_DIR}/src/shader.frag -o ${PROJECT_BINARY_DIR}/frag.spv
+    COMMAND glslangValidator -V ${PROJECT_SOURCE_DIR}/src/shader.vert -o ${PROJECT_BINARY_DIR}/vert.spv
 )
 
 set(sources
@@ -61,7 +50,7 @@ target_compile_features(${target_name} PUBLIC cxx_std_17)
 
 add_dependencies(${target_name} glade_file)
 
-target_link_libraries(${target_name} Vulkan::Vulkan glfw)
+target_link_libraries(${target_name} Vulkan::Vulkan glfw glm)
 add_dependencies(${target_name} shaders)
 
 ###############################################################################
