@@ -1,8 +1,82 @@
 #include <cool_gl/Line.h>
+#include <iostream>
 
 namespace cool_gl {
 
+
 Drawable *Line::copy() const noexcept { return new Line{*this}; }
+
+// Region Codes for Cohen Sutherland Clipping
+const int INSIDE = 0; // 0000
+const int LEFT = 1;   // 0001
+const int RIGHT = 2;  // 0010
+const int BOTTOM = 4; // 0100
+const int TOP = 8;    // 1000
+
+int check_point_region(double x, double y, Vec window_min, Vec window_max){
+  int code = 0;
+  if (x < window_min.x)
+      code |= LEFT;
+  else if (x > window_max.x)
+      code |= RIGHT;
+  if (y < window_min.y)
+      code |= BOTTOM;
+  else if (y > window_max.y)
+      code |= TOP;
+
+  return code;
+}
+
+std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end, Vec window_min, Vec window_max){
+  int begin_code = check_point_region(begin.x, begin.y, window_min, window_max);
+  int end_code = check_point_region(end.x, end.y, window_min, window_max);
+
+  std::vector<Vec> clipped_points = {};
+
+  if(begin_code == 0 && end_code == 0){
+    clipped_points = { begin, end };
+  } else {
+    int outside_region_code;
+    double new_x, new_y;
+
+    if(begin_code != 0){
+      outside_region_code = begin_code;
+    } else {
+      outside_region_code = end_code;
+    }
+
+    if (outside_region_code & TOP){
+      new_x = begin.x + (end.x - begin.x) * (window_max.y - begin.y) / (end.y - begin.y);
+      new_y = window_max.y;
+    }
+    else if (outside_region_code & BOTTOM){
+      new_x = begin.x + (end.x - begin.x) * (window_min.y - begin.y) / (end.y - begin.y);
+      new_y = window_min.y;
+    } else if (outside_region_code & RIGHT){
+      new_x = window_max.x;
+      new_y = begin.y + (end.y - begin.y) * (window_max.x - begin.x) / (end.x - begin.x);
+    } else if (outside_region_code & LEFT){
+      new_x = window_min.x;
+      new_y = begin.y + (end.y - begin.y) * (window_min.x - begin.x) / (end.x - begin.x);
+    }
+
+    // Replace point outside clipping area by new x and y (intersection)
+    if(outside_region_code == begin_code){
+      begin.x = new_x;
+      begin.y = new_y;
+
+      clipped_points = { begin, end };
+    } else {
+      end.x = new_x;
+      end.y = new_y;
+
+      clipped_points = { begin, end };
+    }
+  }
+
+  return clipped_points;
+}
+
 
 void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
                 Vec viewport_max) const {
