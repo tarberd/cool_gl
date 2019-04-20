@@ -89,23 +89,32 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   auto window_min = Vec{-1.0 - offset, -1.0 - offset};
   auto window_max = Vec{1.0 + offset, 1.0 + offset};
 
-  transformed_begin.x = (begin.x - window_min.x) /
-                        (window_max.x - window_min.x) *
+  // TODO: Change this to a function that will choose between:
+  // Cohen-Sutherland and a second algorithm
+  std::vector<Vec> clipped_points = cohen_sutherland_clipping(begin, end, window_min, window_max);;
+
+  if(!clipped_points.empty()){
+    transformed_begin = clipped_points[0];
+    transformed_end = clipped_points[1];
+
+    transformed_begin.x = (begin.x - window_min.x) /
+                          (window_max.x - window_min.x) *
+                          (viewport_max.x - viewport_min.x);
+    transformed_begin.y =
+        (1 - (begin.y - window_min.y) / (window_max.y - window_min.y)) *
+        (viewport_max.y - viewport_min.y);
+
+    transformed_end.x = (end.x - window_min.x) / (window_max.x - window_min.x) *
                         (viewport_max.x - viewport_min.x);
-  transformed_begin.y =
-      (1 - (begin.y - window_min.y) / (window_max.y - window_min.y)) *
-      (viewport_max.y - viewport_min.y);
+    transformed_end.y =
+        (1 - (end.y - window_min.y) / (window_max.y - window_min.y)) *
+        (viewport_max.y - viewport_min.y);
 
-  transformed_end.x = (end.x - window_min.x) / (window_max.x - window_min.x) *
-                      (viewport_max.x - viewport_min.x);
-  transformed_end.y =
-      (1 - (end.y - window_min.y) / (window_max.y - window_min.y)) *
-      (viewport_max.y - viewport_min.y);
-
-  cr->set_source_rgb(colour.r, colour.g, colour.b);
-  cr->move_to(transformed_begin.x, transformed_begin.y);
-  cr->line_to(transformed_end.x, transformed_end.y);
-  cr->stroke();
+    cr->set_source_rgb(colour.r, colour.g, colour.b);
+    cr->move_to(transformed_begin.x, transformed_begin.y);
+    cr->line_to(transformed_end.x, transformed_end.y);
+    cr->stroke();
+  }
 }
 
 void Line::transform(const Matrix &transform) noexcept {
