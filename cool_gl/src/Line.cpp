@@ -31,50 +31,48 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end, Vec window_min, V
   int begin_code = check_point_region(begin.x, begin.y, window_min, window_max);
   int end_code = check_point_region(end.x, end.y, window_min, window_max);
 
-  std::vector<Vec> clipped_points = {};
-
-  if(begin_code == 0 && end_code == 0){
-    clipped_points = { begin, end };
-  } else {
-    int outside_region_code;
-    double new_x, new_y;
-
-    if(begin_code != 0){
-      outside_region_code = begin_code;
+  while(true){
+    if(begin_code == 0 && end_code == 0){
+      return { begin, end };
+    } else if(begin_code & end_code){
+      return {};
     } else {
-      outside_region_code = end_code;
-    }
+      int outside_region_code;
+      double new_x, new_y;
 
-    if (outside_region_code & TOP){
-      new_x = begin.x + (end.x - begin.x) * (window_max.y - begin.y) / (end.y - begin.y);
-      new_y = window_max.y;
-    }
-    else if (outside_region_code & BOTTOM){
-      new_x = begin.x + (end.x - begin.x) * (window_min.y - begin.y) / (end.y - begin.y);
-      new_y = window_min.y;
-    } else if (outside_region_code & RIGHT){
-      new_x = window_max.x;
-      new_y = begin.y + (end.y - begin.y) * (window_max.x - begin.x) / (end.x - begin.x);
-    } else if (outside_region_code & LEFT){
-      new_x = window_min.x;
-      new_y = begin.y + (end.y - begin.y) * (window_min.x - begin.x) / (end.x - begin.x);
-    }
+      if(begin_code != 0){
+        outside_region_code = begin_code;
+      } else {
+        outside_region_code = end_code;
+      }
 
-    // Replace point outside clipping area by new x and y (intersection)
-    if(outside_region_code == begin_code){
-      begin.x = new_x;
-      begin.y = new_y;
+      if (outside_region_code & TOP){
+        new_x = begin.x + (end.x - begin.x) * (window_max.y - begin.y) / (end.y - begin.y);
+        new_y = window_max.y;
+      }
+      else if (outside_region_code & BOTTOM){
+        new_x = begin.x + (end.x - begin.x) * (window_min.y - begin.y) / (end.y - begin.y);
+        new_y = window_min.y;
+      } else if (outside_region_code & RIGHT){
+        new_x = window_max.x;
+        new_y = begin.y + (end.y - begin.y) * (window_max.x - begin.x) / (end.x - begin.x);
+      } else if (outside_region_code & LEFT){
+        new_x = window_min.x;
+        new_y = begin.y + (end.y - begin.y) * (window_min.x - begin.x) / (end.x - begin.x);
+      }
 
-      clipped_points = { begin, end };
-    } else {
-      end.x = new_x;
-      end.y = new_y;
-
-      clipped_points = { begin, end };
+      // Replace point outside clipping area by new x and y (intersection)
+      if(outside_region_code == begin_code){
+        begin = { new_x, new_y };
+        begin_code = check_point_region(begin.x, begin.y, window_min, window_max);
+      } else {
+        end = { new_x, new_y };
+        end_code = check_point_region(end.x, end.y, window_min, window_max);
+      }
     }
   }
 
-  return clipped_points;
+  return { begin, end };
 }
 
 
@@ -84,30 +82,36 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
 
   Vec transformed_begin;
   Vec transformed_end;
+  Vec clipped_begin;
+  Vec clipped_end;
 
   double offset = 0.15;
-  auto window_min = Vec{-1.0 - offset, -1.0 - offset};
-  auto window_max = Vec{1.0 + offset, 1.0 + offset};
+
+  auto window_min = Vec{-1.0, -1.0};
+  auto window_max = Vec{1.0, 1.0};
 
   // TODO: Change this to a function that will choose between:
   // Cohen-Sutherland and a second algorithm
   std::vector<Vec> clipped_points = cohen_sutherland_clipping(begin, end, window_min, window_max);;
 
-  if(!clipped_points.empty()){
-    transformed_begin = clipped_points[0];
-    transformed_end = clipped_points[1];
+  window_min = Vec{-1.0 - offset, -1.0 - offset};
+  window_max = Vec{1.0 + offset, 1.0 + offset};
 
-    transformed_begin.x = (begin.x - window_min.x) /
+  if(!clipped_points.empty()){
+    clipped_begin = clipped_points[0];
+    clipped_end = clipped_points[1];
+
+    transformed_begin.x = (clipped_begin.x - window_min.x) /
                           (window_max.x - window_min.x) *
                           (viewport_max.x - viewport_min.x);
     transformed_begin.y =
-        (1 - (begin.y - window_min.y) / (window_max.y - window_min.y)) *
+        (1 - (clipped_begin.y - window_min.y) / (window_max.y - window_min.y)) *
         (viewport_max.y - viewport_min.y);
 
-    transformed_end.x = (end.x - window_min.x) / (window_max.x - window_min.x) *
+    transformed_end.x = (clipped_end.x - window_min.x) / (window_max.x - window_min.x) *
                         (viewport_max.x - viewport_min.x);
     transformed_end.y =
-        (1 - (end.y - window_min.y) / (window_max.y - window_min.y)) *
+        (1 - (clipped_end.y - window_min.y) / (window_max.y - window_min.y)) *
         (viewport_max.y - viewport_min.y);
 
     cr->set_source_rgb(colour.r, colour.g, colour.b);
