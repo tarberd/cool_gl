@@ -137,7 +137,10 @@ CoolApp::CoolApp(int argc, char **argv) {
   // Create debbuging object
 #ifdef NDEBUG
 #else
-  cool_main_entry->set_text("polygon test 10 10 10 20 20 20 20 10");
+  cool_main_entry->set_text("polygon test_square 10 10 10 20 20 20 20 10");
+  cool_main_entry_changed();
+  cool_main_entry_button_clicked();
+  cool_main_entry->set_text("polygon test_triangle -10 -10 -10 -20 -20 -20");
   cool_main_entry_changed();
   cool_main_entry_button_clicked();
 #endif

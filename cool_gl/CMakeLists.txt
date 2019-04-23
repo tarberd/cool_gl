@@ -40,6 +40,7 @@ set(export_namespace_name ${PROJECT_NAME}::)
 # Set Library sources
 set(sources
     src/Drawable.cpp
+    src/clipping.cpp
     src/Line.cpp
     src/Matrix.cpp
     src/Point.cpp

@@ -72,7 +72,7 @@ struct CoolApp {
   Gtk::Button *cool_navigation_rotate_right_button;
 
   const double ZOOM_FACTOR = 1.0;
-  const double MOVE_FACTOR = 0.07;
+  const double MOVE_FACTOR = 0.05;
 
   double zoom_factor = 0;
   double rotate_factor = 0;

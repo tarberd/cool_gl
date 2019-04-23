@@ -1,3 +1,4 @@
+#include "clipping.h"
 #include <cool_gl/Line.h>
 #include <iostream>
 
@@ -27,7 +28,9 @@ int check_point_region(double x, double y, Vec window_min, Vec window_max){
   return code;
 }
 
-std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end, Vec window_min, Vec window_max){
+std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end,
+                                           const Vec &window_min,
+                                           const Vec &window_max) {
   int begin_code = check_point_region(begin.x, begin.y, window_min, window_max);
   int end_code = check_point_region(end.x, end.y, window_min, window_max);
 
@@ -63,18 +66,17 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end, Vec window_min, V
 
       // Replace point outside clipping area by new x and y (intersection)
       if(outside_region_code == begin_code){
-        begin = { new_x, new_y };
+        begin = {new_x, new_y};
         begin_code = check_point_region(begin.x, begin.y, window_min, window_max);
       } else {
-        end = { new_x, new_y };
+        end = {new_x, new_y};
         end_code = check_point_region(end.x, end.y, window_min, window_max);
       }
     }
   }
 
-  return { begin, end };
+  return {begin, end};
 }
-
 
 void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
                 Vec viewport_max) const {
@@ -85,7 +87,6 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   Vec clipped_begin;
   Vec clipped_end;
 
-  double offset = 0.15;
 
   auto window_min = Vec{-1.0, -1.0};
   auto window_max = Vec{1.0, 1.0};
@@ -94,6 +95,7 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   // Cohen-Sutherland and a second algorithm
   std::vector<Vec> clipped_points = cohen_sutherland_clipping(begin, end, window_min, window_max);;
 
+  double offset = 0.15;
   window_min = Vec{-1.0 - offset, -1.0 - offset};
   window_max = Vec{1.0 + offset, 1.0 + offset};
 

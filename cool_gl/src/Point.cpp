@@ -4,7 +4,7 @@ namespace cool_gl {
 
 Drawable *Point::copy() const noexcept { return new Point{*this}; }
 
-bool should_draw_point(Vec point) {
+bool should_draw_point(const Vec &point) {
   if (std::abs(point.x) > 1 || std::abs(point.y) > 1) {
     return false;
   }
