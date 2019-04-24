@@ -24,7 +24,7 @@ endif()
 project(cool_gl VERSION 0.0.1)
 
 find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
+pkg_check_modules(GTKMM IMPORTED_TARGET gtkmm-3.0)
 
 # Set target name
 set(target_name cool_gl)
@@ -78,8 +78,7 @@ target_include_directories(${target_name} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(${target_name} PUBLIC ${GTKMM_INCLUDE_DIRS})
-target_link_libraries(${target_name} ${GTKMM_LIBRARIES})
+target_link_libraries(${target_name} PkgConfig::GTKMM)
 
 ###############################################################################
 # Test Library

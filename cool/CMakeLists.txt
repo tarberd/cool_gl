@@ -24,7 +24,7 @@ endif()
 project(cool VERSION 0.0.1)
 
 find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
+pkg_check_modules(GTKMM IMPORTED_TARGET gtkmm-3.0)
 
 find_package(cool_gl REQUIRED)
 
@@ -53,9 +53,7 @@ target_compile_features(${target_name} PRIVATE cxx_std_17)
 
 add_dependencies(${target_name} glade_file)
 
-target_include_directories(${target_name} PUBLIC ${GTKMM_INCLUDE_DIRS})
-
-target_link_libraries(${target_name} ${GTKMM_LIBRARIES} cool_gl::cool_gl)
+target_link_libraries(${target_name} PkgConfig::GTKMM cool_gl::cool_gl)
 
 ###############################################################################
 # Test
