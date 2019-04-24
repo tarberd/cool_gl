@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 namespace cool_gl {
 
 struct Vec {
@@ -20,7 +22,10 @@ struct Vec {
   const double &operator[](int x) const;
   double &operator[](int x);
 
+  friend std::ostream &operator<<(std::ostream &os, const Vec &p);
 };
+
+std::ostream &operator<<(std::ostream &os, const Vec &p);
 
 double angle(const Vec &left, const Vec &right) noexcept;
 

@@ -43,4 +43,8 @@ double angle(const Vec &left, const Vec &right) noexcept {
   return std::acos(dotproduct / (magnitude_left * magnitude_right));
 }
 
+std::ostream &operator<<(std::ostream &os, const Vec &p) {
+  return os << "{" << p.x << ", " << p.y << ", " << p.z << ", " << p.a << "}";
+}
+
 } // namespace cool_gl

@@ -81,12 +81,116 @@ std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &in,
                                              const Vec &window_min,
                                              const Vec &window_max) {
   std::vector<Vec> out = {};
-  std::vector<Vec> cliping_edges = {window_min,
-                                    {window_min.x, window_max.y},
-                                    window_max,
-                                    {window_max.x, window_min.y}};
-
-  return in;
+  // std::vector<Vec> cliping_edges = {window_min,
+  //                                   {window_min.x, window_max.y},
+  //                                   window_max,
+  //                                   {window_max.x, window_min.y}};
+  // // First clipping edge
+  // for (int i = 0; i < in.size(); i++) {
+  //   int next = (i + 1) % in.size();
+  //
+  //   // Check in in
+  //   if (in[i].x >= window_min.x && in[next].x >= window_min.x) {
+  //     out.emplace_back(in[next]);
+  //   }
+  //   // Check in out
+  //   else if (in[i].x >= window_min.x && in[next].x < window_min.x) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[1]);
+  //   }
+  //   // Check out in
+  //   else if (in[i].x < window_min.x && in[next].x >= window_min.x) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[0]);
+  //     out.emplace_back(line[1]);
+  //   }
+  // }
+  // // Second clipping edge
+  // for (int i = 0; i < in.size(); i++) {
+  //   int next = (i + 1) % in.size();
+  //
+  //   // Check in in
+  //   if (in[i].y >= window_min.y && in[next].y >= window_min.y) {
+  //     out.emplace_back(in[next]);
+  //   }
+  //   // Check in out
+  //   else if (in[i].y >= window_min.y && in[next].y < window_min.y) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[1]);
+  //   }
+  //   // Check out in
+  //   else if (in[i].y < window_min.y && in[next].y >= window_min.y) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[0]);
+  //     out.emplace_back(line[1]);
+  //   }
+  // }
+  // // Third clipping edge
+  // for (int i = 0; i < in.size(); i++) {
+  //   int next = (i + 1) % in.size();
+  //
+  //   // Check in in
+  //   if (in[i].x <= window_max.x && in[next].x <= window_max.x) {
+  //     out.emplace_back(in[next]);
+  //   }
+  //   // Check in out
+  //   else if (in[i].x <= window_max.x && in[next].x > window_max.x) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[1]);
+  //   }
+  //   // Check out in
+  //   else if (in[i].x > window_max.x && in[next].x <= window_max.x) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[0]);
+  //     out.emplace_back(line[1]);
+  //   }
+  // }
+  // // Fourth clipping edge
+  // for (int i = 0; i < in.size(); i++) {
+  //   int next = (i + 1) % in.size();
+  //
+  //   // Check in in
+  //   if (in[i].y <= window_max.y && in[next].y <= window_max.y) {
+  //     out.emplace_back(in[next]);
+  //   }
+  //   // Check in out
+  //   else if (in[i].y <= window_max.y && in[next].y > window_max.y) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[1]);
+  //   }
+  //   // Check out in
+  //   else if (in[i].y > window_max.y && in[next].y <= window_max.y) {
+  //
+  //     auto line =
+  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
+  //
+  //     out.emplace_back(line[0]);
+  //     out.emplace_back(line[1]);
+  //   }
+  // }
+  //
+  return out;
 }
 
 } // namespace cool_gl
