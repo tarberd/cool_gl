@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cool_gl/Line.h>
 #include <cool_gl/Polygon.h>
 #include <iostream>
@@ -11,4 +13,7 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end,
                                            const Vec &window_min,
                                            const Vec &window_max);
 
+std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &in,
+                                             const Vec &window_min,
+                                             const Vec &window_max);
 } // namespace cool_gl

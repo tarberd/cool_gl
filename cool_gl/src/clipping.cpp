@@ -77,4 +77,16 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end,
   return {begin, end};
 }
 
+std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &in,
+                                             const Vec &window_min,
+                                             const Vec &window_max) {
+  std::vector<Vec> out = {};
+  std::vector<Vec> cliping_edges = {window_min,
+                                    {window_min.x, window_max.y},
+                                    window_max,
+                                    {window_max.x, window_min.y}};
+
+  return in;
+}
+
 } // namespace cool_gl
