@@ -77,119 +77,131 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end,
   return {begin, end};
 }
 
-std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &in,
+Vec find_intersection_x(const Vec &begin, const Vec &end, double x) {
+  double m = (end.y - begin.y) / (end.x - begin.x);
+  double y = m * (x - begin.x) + begin.y;
+  return {x, y};
+}
+
+Vec find_intersection_y(const Vec &begin, const Vec &end, double y) {
+  double m = (end.y - begin.y) / (end.x - begin.x);
+  double x = ((y - begin.y) / m) + begin.x;
+  return {x, y};
+}
+
+std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &polygon,
                                              const Vec &window_min,
                                              const Vec &window_max) {
+  std::vector<Vec> cliping_edges = {window_min,
+                                    {window_min.x, window_max.y},
+                                    window_max,
+                                    {window_max.x, window_min.y}};
+
+  std::vector<Vec> in = polygon;
   std::vector<Vec> out = {};
-  // std::vector<Vec> cliping_edges = {window_min,
-  //                                   {window_min.x, window_max.y},
-  //                                   window_max,
-  //                                   {window_max.x, window_min.y}};
-  // // First clipping edge
-  // for (int i = 0; i < in.size(); i++) {
-  //   int next = (i + 1) % in.size();
-  //
-  //   // Check in in
-  //   if (in[i].x >= window_min.x && in[next].x >= window_min.x) {
-  //     out.emplace_back(in[next]);
-  //   }
-  //   // Check in out
-  //   else if (in[i].x >= window_min.x && in[next].x < window_min.x) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[1]);
-  //   }
-  //   // Check out in
-  //   else if (in[i].x < window_min.x && in[next].x >= window_min.x) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[0]);
-  //     out.emplace_back(line[1]);
-  //   }
-  // }
-  // // Second clipping edge
-  // for (int i = 0; i < in.size(); i++) {
-  //   int next = (i + 1) % in.size();
-  //
-  //   // Check in in
-  //   if (in[i].y >= window_min.y && in[next].y >= window_min.y) {
-  //     out.emplace_back(in[next]);
-  //   }
-  //   // Check in out
-  //   else if (in[i].y >= window_min.y && in[next].y < window_min.y) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[1]);
-  //   }
-  //   // Check out in
-  //   else if (in[i].y < window_min.y && in[next].y >= window_min.y) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[0]);
-  //     out.emplace_back(line[1]);
-  //   }
-  // }
-  // // Third clipping edge
-  // for (int i = 0; i < in.size(); i++) {
-  //   int next = (i + 1) % in.size();
-  //
-  //   // Check in in
-  //   if (in[i].x <= window_max.x && in[next].x <= window_max.x) {
-  //     out.emplace_back(in[next]);
-  //   }
-  //   // Check in out
-  //   else if (in[i].x <= window_max.x && in[next].x > window_max.x) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[1]);
-  //   }
-  //   // Check out in
-  //   else if (in[i].x > window_max.x && in[next].x <= window_max.x) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[0]);
-  //     out.emplace_back(line[1]);
-  //   }
-  // }
-  // // Fourth clipping edge
-  // for (int i = 0; i < in.size(); i++) {
-  //   int next = (i + 1) % in.size();
-  //
-  //   // Check in in
-  //   if (in[i].y <= window_max.y && in[next].y <= window_max.y) {
-  //     out.emplace_back(in[next]);
-  //   }
-  //   // Check in out
-  //   else if (in[i].y <= window_max.y && in[next].y > window_max.y) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[1]);
-  //   }
-  //   // Check out in
-  //   else if (in[i].y > window_max.y && in[next].y <= window_max.y) {
-  //
-  //     auto line =
-  //         cohen_sutherland_clipping(in[i], in[next], window_min, window_max);
-  //
-  //     out.emplace_back(line[0]);
-  //     out.emplace_back(line[1]);
-  //   }
-  // }
-  //
+  // First clipping edge
+  for (int i = 0; i < in.size(); i++) {
+    int next = (i + 1) % in.size();
+
+    // Check in in
+    if (in[i].x >= window_min.x && in[next].x >= window_min.x) {
+      out.emplace_back(in[next]);
+    }
+    // Check in out
+    else if (in[i].x >= window_min.x && in[next].x < window_min.x) {
+
+      auto intersect_point = find_intersection_x(in[i], in[next], window_min.x);
+
+      out.emplace_back(intersect_point);
+    }
+    // Check out in
+    else if (in[i].x < window_min.x && in[next].x >= window_min.x) {
+
+      auto intersect_point = find_intersection_x(in[i], in[next], window_min.x);
+
+      out.emplace_back(intersect_point);
+      out.emplace_back(in[next]);
+    }
+  }
+  in = out;
+  out.clear();
+  // Second clipping edge
+  for (int i = 0; i < in.size(); i++) {
+    int next = (i + 1) % in.size();
+
+    // Check in in
+    if (in[i].y <= window_max.y && in[next].y <= window_max.y) {
+      out.emplace_back(in[next]);
+    }
+    // Check in out
+    else if (in[i].y <= window_max.y && in[next].y > window_max.y) {
+
+      auto intersect_point = find_intersection_y(in[i], in[next], window_max.y);
+
+      out.emplace_back(intersect_point);
+    }
+    // Check out in
+    else if (in[i].y > window_max.y && in[next].y <= window_max.y) {
+
+      auto intersect_point = find_intersection_y(in[i], in[next], window_max.y);
+
+      out.emplace_back(intersect_point);
+      out.emplace_back(in[next]);
+    }
+  }
+  in = out;
+  out.clear();
+  // Third clipping edge
+  for (int i = 0; i < in.size(); i++) {
+    int next = (i + 1) % in.size();
+
+    // Check in in
+    if (in[i].x <= window_max.x && in[next].x <= window_max.x) {
+      out.emplace_back(in[next]);
+    }
+    // Check in out
+    else if (in[i].x <= window_max.x && in[next].x > window_max.x) {
+
+      auto intersect_point = find_intersection_x(in[i], in[next], window_max.x);
+
+      out.emplace_back(intersect_point);
+    }
+    // Check out in
+    else if (in[i].x > window_max.x && in[next].x <= window_max.x) {
+
+      auto intersect_point = find_intersection_x(in[i], in[next], window_max.x);
+
+      out.emplace_back(intersect_point);
+      out.emplace_back(in[next]);
+    }
+  }
+  in = out;
+  out.clear();
+  // Fourth clipping edge
+  for (int i = 0; i < in.size(); i++) {
+    int next = (i + 1) % in.size();
+
+    // Check in in
+    if (in[i].y >= window_min.y && in[next].y >= window_min.y) {
+      out.emplace_back(in[next]);
+    }
+    // Check in out
+    else if (in[i].y >= window_min.y && in[next].y < window_min.y) {
+
+      auto intersect_point = find_intersection_y(in[i], in[next], window_min.y);
+
+      out.emplace_back(intersect_point);
+    }
+    // Check out in
+    else if (in[i].y < window_min.y && in[next].y >= window_min.y) {
+
+      auto intersect_point = find_intersection_y(in[i], in[next], window_min.y);
+
+      out.emplace_back(intersect_point);
+      out.emplace_back(in[next]);
+    }
+  }
+
   return out;
 }
 
