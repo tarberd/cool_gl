@@ -85,3 +85,9 @@ TEST_CASE("Test matrix matrix multiplication", "[cool_gl]") {
 
   test_matrix_matrix_multiply(m1, m2, expected);
 }
+
+TEST_CASE("Test transform operation compose", "[cool_gl]") {
+  auto translate = create_translate_transform(5.0, 2.0, -3.0);
+
+  auto rotate = create_rotate_transform(5.0);
+}
