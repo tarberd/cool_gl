@@ -72,14 +72,14 @@ struct CoolApp {
   Gtk::Button *cool_navigation_rotate_right_button;
 
   const double ZOOM_FACTOR = 1.0;
-  const double MOVE_FACTOR = 0.05;
+  const double MOVE_FACTOR = 1.0;
 
   double zoom_factor = 0;
   double rotate_factor = 0;
 
   std::string create_drawable_entrie_string;
 
-  cool_gl::Window window{100, 100, {0.0, 0.0}, {0.0, 1.0}, {1.0, 0.0}};
+  cool_gl::Window window{100, 100, {25.0, 25.0}, {0.0, 1.0}, {1.0, 0.0}};
   std::vector<std::unique_ptr<cool_gl::Drawable>> display_file;
 
   ModelColumns my_columns;

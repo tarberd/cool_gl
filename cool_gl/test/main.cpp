@@ -4,15 +4,19 @@
 #include <cool_gl/cool_gl.h>
 #include <iostream>
 
+#include <cmath>
+
 using namespace cool_gl;
+
+double pi() { return std::atan(1) * 4; };
 
 void test_vec_matrix_multiply(Matrix transform, Vec in, Vec expected) {
   auto result = multiply(transform, in);
 
-  REQUIRE(result[0] == expected.x);
-  REQUIRE(result[1] == expected.y);
-  REQUIRE(result[2] == expected.z);
-  REQUIRE(result[3] == expected.a);
+  REQUIRE(result[0] == Approx(expected.x).margin(1e-10));
+  REQUIRE(result[1] == Approx(expected.y).margin(1e-10));
+  REQUIRE(result[2] == Approx(expected.z).margin(1e-10));
+  REQUIRE(result[3] == Approx(expected.a).margin(1e-10));
 }
 
 void test_matrix_matrix_multiply(Matrix left, Matrix right, Matrix expected) {
@@ -87,7 +91,34 @@ TEST_CASE("Test matrix matrix multiplication", "[cool_gl]") {
 }
 
 TEST_CASE("Test transform operation compose", "[cool_gl]") {
-  auto translate = create_translate_transform(5.0, 2.0, -3.0);
 
-  auto rotate = create_rotate_transform(5.0);
+  auto translate = create_translate_transform(1.0, 1.0, 0.0);
+
+  auto rotate = create_rotate_transform(pi());
+
+  auto vec = Vec{1.0, 0.0, 0.0, 1.0};
+
+  auto expected = Vec{0.0, 1.0, 0.0, 1.0};
+
+  auto final_transform = multiply(rotate, translate);
+
+  test_vec_matrix_multiply(final_transform, vec, expected);
+
+  auto translate2 = create_translate_transform(-1.0, -1.0, 0.0);
+
+  auto transform = multiply(translate2, rotate);
+
+  vec = Vec{2.0, 1.0, 0.0, 1.0};
+
+  expected = Vec{-1.0, 0.0, 0.0, 1.0};
+
+  test_vec_matrix_multiply(transform, vec, expected);
+
+  vec = Vec{2.0, 1.0, 0.0, 1.0};
+  expected = Vec{0.0, 1.0, 0.0, 1.0};
+
+  transform = multiply(translate2, rotate);
+  transform = multiply(transform, translate);
+
+  test_vec_matrix_multiply(transform, vec, expected);
 }

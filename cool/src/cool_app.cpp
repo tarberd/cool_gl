@@ -140,6 +140,9 @@ CoolApp::CoolApp(int argc, char **argv) {
   cool_main_entry->set_text("polygon test_square 10 10 10 20 20 20 20 10");
   cool_main_entry_changed();
   cool_main_entry_button_clicked();
+  cool_main_entry->set_text("polygon test_square -49 -49 -49 49 49 49 49 -49");
+  cool_main_entry_changed();
+  cool_main_entry_button_clicked();
   cool_main_entry->set_text("polygon test_triangle -10 -10 -10 -20 -20 -20");
   cool_main_entry_changed();
   cool_main_entry_button_clicked();
@@ -210,8 +213,8 @@ void CoolApp::cool_navigation_move_left_button_clicked() {
 }
 
 void CoolApp::cool_navigation_zoom_out_button_clicked() {
-  window.height -= zoom_factor;
-  window.width -= zoom_factor;
+  window.height += zoom_factor;
+  window.width += zoom_factor;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
@@ -219,8 +222,8 @@ void CoolApp::cool_navigation_zoom_out_button_clicked() {
 }
 
 void CoolApp::cool_navigation_zoom_in_button_clicked() {
-  window.height += zoom_factor;
-  window.width += zoom_factor;
+  window.height -= zoom_factor;
+  window.width -= zoom_factor;
 
   cool_drawing_area->signal_draw().connect(
       sigc::mem_fun(this, &CoolApp::cool_drawing_area_draw));
