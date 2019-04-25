@@ -23,13 +23,8 @@ endif()
 ###############################################################################
 project(cool VERSION 0.0.1)
 
-<<<<<<< Updated upstream
-find_package(PkgConfig)
-pkg_check_modules(GTKMM IMPORTED_TARGET gtkmm-3.0)
-=======
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
->>>>>>> Stashed changes
+pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
 
 find_package(cool_gl REQUIRED)
 
