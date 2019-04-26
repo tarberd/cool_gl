@@ -13,6 +13,10 @@ std::vector<Vec> cohen_sutherland_clipping(Vec begin, Vec end,
                                            const Vec &window_min,
                                            const Vec &window_max);
 
+std::vector<Vec> liang_barsky_clipping(Vec begin, Vec end,
+                                       const Vec &window_min,
+                                       const Vec &window_max);
+
 std::vector<Vec> sutherland_hodgman_clipping(const std::vector<Vec> &in,
                                              const Vec &window_min,
                                              const Vec &window_max);
