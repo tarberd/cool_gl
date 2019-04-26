@@ -9,7 +9,8 @@ void print_help(std::stringstream &out) {
       << "\ttranslate [object] [delta_x] [delta_y] [delta_z]" << std::endl
       << "\tscale [object] [scale_x] [scale_y] [scale_z]" << std::endl
       << "\trotate [object] [rad]" << std::endl
-      << "\trotate_at [object] [x] [y] [rad]" << std::endl;
+      << "\tclip_line_cohen_sutherland" << std::endl
+      << "\tclip_line_liang_barsky" << std::endl;
 }
 
 void CoolApp::print_to_cool_main_entry_text_view_output(
@@ -470,7 +471,12 @@ void CoolApp::cool_main_entry_button_clicked() {
 
     apply_transform(name, final_transform);
 
-  } else {
+  } else if (command_string == "clip_line_cohen_sutherland") {
+    cool_gl::line_clipping_type = cool_gl::LineClippingType::cohen_sutherland;
+  } else if (command_string == "clip_line_liang_barsky") {
+    cool_gl::line_clipping_type = cool_gl::LineClippingType::liang_barsky;
+  }
+    else {
     output_stream
         << "Please enter a valid command! Enter help to see valid commands."
         << std::endl;

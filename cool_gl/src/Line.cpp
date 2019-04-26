@@ -4,6 +4,8 @@
 
 namespace cool_gl {
 
+LineClippingType line_clipping_type = LineClippingType::cohen_sutherland;
+
 Drawable *Line::copy() const noexcept { return new Line{*this}; }
 
 void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
@@ -14,14 +16,18 @@ void Line::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
   Vec transformed_end;
   Vec clipped_begin;
   Vec clipped_end;
-
+  std::vector<Vec> clipped_points;
 
   auto window_min = Vec{-1.0, -1.0};
   auto window_max = Vec{1.0, 1.0};
 
   // TODO: Change this to a function that will choose between:
   // Cohen-Sutherland and a second algorithm
-  std::vector<Vec> clipped_points = cohen_sutherland_clipping(begin, end, window_min, window_max);;
+  if(line_clipping_type == LineClippingType::cohen_sutherland){
+    clipped_points = cohen_sutherland_clipping(begin, end, window_min, window_max);
+  } else {
+    clipped_points = liang_barsky_clipping(begin, end, window_min, window_max);
+  }
 
   double offset = 0.15;
   window_min = Vec{-1.0 - offset, -1.0 - offset};

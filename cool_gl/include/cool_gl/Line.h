@@ -5,6 +5,13 @@
 
 namespace cool_gl {
 
+enum class LineClippingType{
+  cohen_sutherland,
+  liang_barsky
+};
+
+extern LineClippingType line_clipping_type;
+
 struct Line : public Drawable {
   Vec begin;
   Vec end;

@@ -7,6 +7,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include <cool_gl/Line.h>
 
 namespace cool_app {
 
