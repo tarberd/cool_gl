@@ -47,6 +47,7 @@ set(sources
     src/Polygon.cpp
     src/Vec.cpp
     src/Window.cpp
+    src/WavefrontObj.cpp
 )
 
 # Set Library public headers
@@ -60,6 +61,7 @@ set(public_headers
     include/cool_gl/Polygon.h
     include/cool_gl/Vec.h
     include/cool_gl/Window.h
+    include/cool_gl/WavefrontObj.h
 )
 
 add_library(${target_name} ${sources})
@@ -70,7 +72,7 @@ target_compile_features(${target_name} PUBLIC cxx_std_11)
 set_target_properties(${target_name} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION}
-    PUBLIC_HEADER ${public_headers}
+    PUBLIC_HEADER "${public_headers}"
 )
 
 target_include_directories(${target_name} PUBLIC
