@@ -23,11 +23,11 @@ Window::display_file_type Window::create_normalized_display_file(
 
   auto normalized_display_file = Window::display_file_type{};
 
-  auto world_to_window_centre =
-      cool_gl::create_translate_transform(centre.x, centre.y, centre.z);
-
-  auto world_from_window_centre = cool_gl::create_translate_transform(
+  auto world_to_window_centre = cool_gl::create_translate_transform(
       -1.0 * centre.x, -1.0 * centre.y, -1.0 * centre.z);
+
+  auto world_from_window_centre =
+      cool_gl::create_translate_transform(centre.x, centre.y, centre.z);
 
   auto normalize_coordinates_transform =
       cool_gl::create_scale_transform(2.0 / width, 2.0 / height, 1.0);
@@ -40,12 +40,10 @@ Window::display_file_type Window::create_normalized_display_file(
     rotate_world_to_window_up = create_rotate_transform(window_angle);
   }
 
-  auto final_transform = cool_gl::multiply(world_to_window_centre,
-                                           normalize_coordinates_transform);
+  auto final_transform =
+      cool_gl::multiply(world_to_window_centre, rotate_world_to_window_up);
   final_transform =
-      cool_gl::multiply(final_transform, world_from_window_centre);
-  final_transform =
-      cool_gl::multiply(final_transform, rotate_world_to_window_up);
+      cool_gl::multiply(final_transform, normalize_coordinates_transform);
 
   for (const auto &drawable : display_file) {
     auto copy = drawable->copy();

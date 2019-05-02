@@ -25,8 +25,8 @@ project(cool_gl VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD_11)
 
-find_package(PkgConfig)
-pkg_check_modules(GTKMM IMPORTED_TARGET gtkmm-3.0)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
 
 # Set target name
 set(target_name cool_gl)

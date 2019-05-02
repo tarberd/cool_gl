@@ -43,6 +43,7 @@ void Polygon::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
              (window_max.y - window_min.y)) *
         (viewport_max.y - viewport_min.y);
 
+
     cr->move_to(transformed_begin.x, transformed_begin.y);
     cr->line_to(transformed_end.x, transformed_end.y);
     cr->stroke();
