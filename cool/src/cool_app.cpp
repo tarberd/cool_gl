@@ -1,4 +1,6 @@
 #include "cool_app.h"
+#include <fstream>
+
 namespace cool_app {
 
 void print_help(std::stringstream &out) {
@@ -6,6 +8,7 @@ void print_help(std::stringstream &out) {
       << "\tpoint [object] [x] [y]" << std::endl
       << "\tline [object] [begin_x] [begin_y] [end_x] [end_y]" << std::endl
       << "\tpolygon [object] [list [[x] [y]] ...]" << std::endl
+      << "\topen_obj [object] [file_path]" << std::endl
       << "\ttranslate [object] [delta_x] [delta_y] [delta_z]" << std::endl
       << "\tscale [object] [scale_x] [scale_y] [scale_z]" << std::endl
       << "\trotate [object] [rad]" << std::endl
@@ -473,6 +476,24 @@ void CoolApp::cool_main_entry_button_clicked() {
 
     apply_transform(name, final_transform);
 
+  } else if (command_string == "load") {
+    std::string name;
+
+    std::string file;
+
+    entrie_stream >> name >> file;
+
+    auto input_file = std::ifstream{file};
+
+    auto new_obj = cool_gl::make_polygon_from_obj(input_file);
+
+    new_obj.name() = name;
+
+    display_file.emplace_back(new cool_gl::WavefrontObj{std::move(new_obj)});
+
+    auto row = *object_list->append();
+    row[my_columns.column_type] = display_file.back()->type();
+    row[my_columns.column_name] = display_file.back()->name();
   } else {
     output_stream
         << "Please enter a valid command! Enter help to see valid commands."

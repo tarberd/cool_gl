@@ -41,6 +41,13 @@ add_custom_target(glade_file ALL
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
+add_custom_target(obj_files ALL
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_SOURCE_DIR}/data/cube.obj
+    ${PROJECT_BINARY_DIR}/cube.obj
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+)
+
 # Set sources
 set(sources
     src/main.cpp
@@ -51,7 +58,7 @@ add_executable(${target_name} ${sources})
 
 target_compile_features(${target_name} PRIVATE cxx_std_17)
 
-add_dependencies(${target_name} glade_file)
+add_dependencies(${target_name} glade_file obj_files)
 
 target_link_libraries(${target_name} PkgConfig::GTKMM cool_gl::cool_gl)
 

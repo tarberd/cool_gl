@@ -7,4 +7,5 @@
 #include "Point.h"
 #include "Polygon.h"
 #include "Vec.h"
+#include "WavefrontObj.h"
 #include "Window.h"
