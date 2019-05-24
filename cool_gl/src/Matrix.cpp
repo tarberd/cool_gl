@@ -17,6 +17,25 @@ Matrix create_scale_transform(double sx, double sy, double sz) {
            {0.0, 0.0, 0.0, 1.0}}};
 }
 
+Matrix create_rotate_transform(double rad_x, double rad_y, double rad_z) {
+  auto rotate_x = Matrix{{{1.0, 0.0, 0.0, 0.0},
+                          {0.0, std::cos(rad_x), std::sin(rad_x), 0.0},
+                          {0.0, -1.0 * std::sin(rad_x), std::cos(rad_x), 0.0},
+                          {0.0, 0.0, 0.0, 1.0}}};
+
+  auto rotate_y = Matrix{{{std::cos(rad_y), 0.0, -1.0 * std::sin(rad_y), 0.0},
+                          {0.0, 1.0, 0.0, 0.0},
+                          {std::sin(rad_y), 0.0, std::cos(rad_y), 0.0},
+                          {0.0, 0.0, 0.0, 1.0}}};
+
+  auto rotate_z = Matrix{{{std::cos(rad_z), std::sin(rad_z), 0.0, 0.0},
+                          {-1.0 * std::sin(rad_z), std::cos(rad_z), 0.0, 0.0},
+                          {0.0, 0.0, 1.0, 0.0},
+                          {0.0, 0.0, 0.0, 1.0}}};
+
+  return multiply(multiply(rotate_x, rotate_y), rotate_z);
+}
+
 Matrix create_rotate_transform(double rad) {
   return {{{std::cos(rad), std::sin(rad), 0.0, 0.0},
            {-1.0 * std::sin(rad), std::cos(rad), 0.0, 0.0},

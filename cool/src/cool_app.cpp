@@ -8,10 +8,10 @@ void print_help(std::stringstream &out) {
       << "\tpoint [object] [x] [y]" << std::endl
       << "\tline [object] [begin_x] [begin_y] [end_x] [end_y]" << std::endl
       << "\tpolygon [object] [list [[x] [y]] ...]" << std::endl
-      << "\topen_obj [object] [file_path]" << std::endl
+      << "\tload [object] [file_path]" << std::endl
       << "\ttranslate [object] [delta_x] [delta_y] [delta_z]" << std::endl
       << "\tscale [object] [scale_x] [scale_y] [scale_z]" << std::endl
-      << "\trotate [object] [rad]" << std::endl
+      << "\trotate [object] [rad_x] [rad_y] [rad_z]" << std::endl
       << "\trotate_at [object] [x] [y] [rad]" << std::endl;
 }
 
@@ -435,13 +435,18 @@ void CoolApp::cool_main_entry_button_clicked() {
   } else if (command_string == "rotate") {
     std::string name;
 
-    std::string rad_string;
+    std::string rad_string_x;
+    std::string rad_string_y;
+    std::string rad_string_z;
 
-    entrie_stream >> name >> rad_string;
+    entrie_stream >> name >> rad_string_x >> rad_string_y >> rad_string_z;
 
-    double rad = std::stod(rad_string);
+    double rad_x = std::stod(rad_string_x);
+    double rad_y = std::stod(rad_string_y);
+    double rad_z = std::stod(rad_string_z);
 
-    auto rotate_transform = cool_gl::create_rotate_transform(rad);
+    auto rotate_transform =
+        cool_gl::create_rotate_transform(rad_x, rad_y, rad_z);
 
     apply_transform_on_mass_centre(name, rotate_transform);
   } else if (command_string == "rotate_at") {
