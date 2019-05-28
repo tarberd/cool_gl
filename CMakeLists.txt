@@ -23,6 +23,8 @@ endif()
 ###############################################################################
 project(cool_gl VERSION 0.0.1)
 
+set(CMAKE_CXX_STANDARD 11)
+
 set(as_subproject cool_gl cool)
 
 macro(find_package)

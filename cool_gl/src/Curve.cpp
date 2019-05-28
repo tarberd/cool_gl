@@ -6,37 +6,82 @@ namespace cool_gl {
 
 Drawable *Curve::copy() const noexcept { return new Curve{*this}; }
 
-std::vector<cool_gl::Line> Curve::bezier_curve() {
-  double u = 0.0;
-  std::vector<cool_gl::Line> lines;
-  std::string name = "partial";
-  double x, y;
+std::vector<Vec> Curve::bezier_curve() const noexcept {
 
-  for(u = 0.0 ; u <= 1.0 ; u += 0.0001)
-  {
-    x = pow(1-u,3)*this->control_x[0]+3*u*pow(1-u,2)*this->control_x[1]+3*pow(u,2)*(1-u)*this->control_x[2]
-         +pow(u,3)*this->control_x[3];
-    y = pow(1-u,3)*this->control_y[0]+3*u*pow(1-u,2)*this->control_y[1]+3*pow(u,2)*(1-u)*this->control_y[2]
-        +pow(u,3)*this->control_y[3];
+  std::vector<Vec> result;
 
-    lines.emplace_back(
-        new cool_gl::Line{std::move(x), std::move(y),
-                          cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
-  }
+  result.emplace_back(begin);
+  result.emplace_back((begin.x + end.x + 0.5) / 2, (begin.y + end.y + 0.5) / 2);
+  result.emplace_back(end);
 
-  return lines;
+  // TODO: make real curve points
+
+  return result;
+}
+
+Vec viewport_transform(const Vec &in, const Vec &window_min,
+                       const Vec &window_max, const Vec &viewport_min,
+                       const Vec &viewport_max) {
+  Vec transformed;
+
+  transformed.x = (in.x - window_min.x) / (window_max.x - window_min.x) *
+                  (viewport_max.x - viewport_min.x);
+  transformed.y = (1 - (in.y - window_min.y) / (window_max.y - window_min.y)) *
+                  (viewport_max.y - viewport_min.y);
+  return transformed;
 }
 
 void Curve::draw(const Cairo::RefPtr<Cairo::Context> &cr, Vec viewport_min,
                 Vec viewport_max) const {
-  std::vector<cool_gl::Line> result;
-  result = bezier_curve({*this});
 
-  for(int i = 0; i < result.size(); i ++){
-    cr->move_to(result.begin.x, result.begin.y);
-    cr->line_to(result.end.x, result.end.y);
+  cr->set_line_width(width);
+  cr->set_source_rgb(colour.r, colour.g, colour.b);
+
+  auto result = bezier_curve();
+
+
+  auto window_min = Vec{-1.0, -1.0};
+  auto window_max = Vec{1.0, 1.0};
+
+  auto clipped_result = std::vector<Vec>{};
+
+  for (int i = 1; i < result.size(); i++) {
+    auto vector = cohen_sutherland_clipping(result[i - 1], result[i],
+                                            window_min, window_max);
+
+    for (const auto &vec : vector) {
+      clipped_result.emplace_back(vec);
+    }
+  }
+
+  double offset = 0.15;
+  window_min = Vec{-1.0 - offset, -1.0 - offset};
+  window_max = Vec{1.0 + offset, 1.0 + offset};
+
+  auto transformed_result = std::vector<Vec>{};
+
+  for (const Vec &vec : clipped_result) {
+    transformed_result.emplace_back(viewport_transform(
+        vec, window_min, window_max, viewport_min, viewport_max));
+  }
+
+  for (int i = 0; i < transformed_result.size(); i += 2) {
+    cr->move_to(transformed_result[i].x, transformed_result[i].y);
+    cr->line_to(transformed_result[i + 1].x, transformed_result[i + 1].y);
     cr->stroke();
   }
+}
+
+void Curve::transform(const Matrix &transform) noexcept {
+  begin = multiply(transform, begin);
+  end = multiply(transform, end);
+}
+
+Vec Curve::mass_centre() noexcept {
+  double x_centre = (begin.x + end.x) / 2.0;
+  double y_centre = (begin.y + end.y) / 2.0;
+
+  return Vec{x_centre, y_centre};
 }
 
 std::string Curve::type() const noexcept { return "Curve"; }

@@ -147,6 +147,9 @@ CoolApp::CoolApp(int argc, char **argv) {
   cool_main_entry->set_text("polygon test_triangle -10 -10 -10 -20 -20 -20");
   cool_main_entry_changed();
   cool_main_entry_button_clicked();
+  cool_main_entry->set_text("curve test_curve 30 30 30 -30 0 0");
+  cool_main_entry_changed();
+  cool_main_entry_button_clicked();
 #endif
 }
 
@@ -370,9 +373,6 @@ void CoolApp::cool_main_entry_button_clicked() {
     row[my_columns.column_name] = display_file.back()->name();
   } else if (command_string == "curve") {
     std::string name;
-    std::vector<cool_gl::Line> result;
-    std::vector<double> control_x;
-    std::vector<double> control_y;
 
     std::string x_begin_string;
     std::string y_begin_string;
@@ -380,28 +380,16 @@ void CoolApp::cool_main_entry_button_clicked() {
     std::string x_end_string;
     std::string y_end_string;
 
-    std::string x_control_begin_string;
-    std::string x_control_end_string;
-
-    std::string y_control_begin_string;
-    std::string y_control_end_string;
-
-
     entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
-        y_end_string >> x_control_begin_string >> x_control_end_string >> y_control_begin_string >> y_control_end_string;
+        y_end_string;
 
     double x_begin = std::stod(x_begin_string);
     double y_begin = std::stod(y_begin_string);
     double x_end = std::stod(x_end_string);
     double y_end = std::stod(y_end_string);
 
-    double x_begin_control = std::stod(x_control_begin_string);
-    double x_end_control = std::stod(x_control_end_string);
-    double y_begin_control = std::stod(y_control_begin_string);
-    double y_end_control = std::stod(y_control_end_string);
-
-    auto begin = cool_gl::Vec{x_begin, y_begin, 1.0};
-    auto end = cool_gl::Vec{x_end, y_end, 1.0};
+    auto begin = cool_gl::Vec{x_begin, y_begin};
+    auto end = cool_gl::Vec{x_end, y_end};
 
     output_stream << "Create: " << command_string << std::endl
                   << "\tname: " << name << std::endl;
@@ -410,127 +398,146 @@ void CoolApp::cool_main_entry_button_clicked() {
     output_stream << "(" << x_end << ", " << y_end << ") ";
     output_stream << std::endl;
 
-    control_x = { x_begin, x_begin_control, x_end_control, x_end };
-    control_y = { y_begin, y_begin_control, y_end_control, y_end };
-
-    display_file.emplace_back(
-        new cool_gl::Curve{std::move(control_x), std::move(control_y),
-                          cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
-
-    auto row = *object_list->append();
-    row[my_columns.column_type] = display_file.back()->type();
-    row[my_columns.column_name] = display_file.back()->name();
-  } else if (command_string == "polygon") {
-    std::string name;
-
-    entrie_stream >> name;
-
-    output_stream << "Create: " << command_string << std::endl
-                  << "\tname: " << name << std::endl;
-    output_stream << "\tpoint list: ";
-
     std::string x_string;
     std::string y_string;
 
-    std::vector<cool_gl::Vec> points;
+    std::vector<cool_gl::Vec> control_points;
 
     while (entrie_stream >> x_string >> y_string) {
       double x = std::stod(x_string);
       double y = std::stod(y_string);
       output_stream << "(" << x << ", " << y << ") ";
 
-      points.emplace_back(x, y, 1.0);
+      control_points.emplace_back(x, y);
     }
 
     output_stream << std::endl;
 
-    display_file.emplace_back(new cool_gl::Polygon{
-        std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
+    display_file.emplace_back(new cool_gl::Curve{
+        std::move(begin), std::move(end), std::move(control_points),
+        cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
     auto row = *object_list->append();
     row[my_columns.column_type] = display_file.back()->type();
     row[my_columns.column_name] = display_file.back()->name();
-  } else if (command_string == "translate") {
-    std::string name;
+    }
+    else if (command_string == "polygon") {
+      std::string name;
 
-    std::string dx_string;
-    std::string dy_string;
-    std::string dz_string;
+      entrie_stream >> name;
 
-    entrie_stream >> name >> dx_string >> dy_string >> dz_string;
+      output_stream << "Create: " << command_string << std::endl
+                    << "\tname: " << name << std::endl;
+      output_stream << "\tpoint list: ";
 
-    double dx = std::stod(dx_string);
-    double dy = std::stod(dy_string);
-    double dz = std::stod(dz_string);
+      std::string x_string;
+      std::string y_string;
 
-    auto translate_transform = cool_gl::create_translate_transform(dx, dy, dz);
+      std::vector<cool_gl::Vec> points;
 
-    apply_transform(name, translate_transform);
-  } else if (command_string == "scale") {
-    std::string name;
+      while (entrie_stream >> x_string >> y_string) {
+        double x = std::stod(x_string);
+        double y = std::stod(y_string);
+        output_stream << "(" << x << ", " << y << ") ";
 
-    std::string sx_string;
-    std::string sy_string;
-    std::string sz_string;
+        points.emplace_back(x, y, 1.0);
+      }
 
-    entrie_stream >> name >> sx_string >> sy_string >> sz_string;
+      output_stream << std::endl;
 
-    double sx = std::stod(sx_string);
-    double sy = std::stod(sy_string);
-    double sz = std::stod(sz_string);
+      display_file.emplace_back(new cool_gl::Polygon{
+          std::move(points), cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
 
-    auto scale_transform = cool_gl::create_scale_transform(sx, sy, sz);
+      auto row = *object_list->append();
+      row[my_columns.column_type] = display_file.back()->type();
+      row[my_columns.column_name] = display_file.back()->name();
+    }
+    else if (command_string == "translate") {
+      std::string name;
 
-    apply_transform_on_mass_centre(name, scale_transform);
-  } else if (command_string == "rotate") {
-    std::string name;
+      std::string dx_string;
+      std::string dy_string;
+      std::string dz_string;
 
-    std::string rad_string;
+      entrie_stream >> name >> dx_string >> dy_string >> dz_string;
 
-    entrie_stream >> name >> rad_string;
+      double dx = std::stod(dx_string);
+      double dy = std::stod(dy_string);
+      double dz = std::stod(dz_string);
 
-    double rad = std::stod(rad_string);
+      auto translate_transform =
+          cool_gl::create_translate_transform(dx, dy, dz);
 
-    auto rotate_transform = cool_gl::create_rotate_transform(rad);
+      apply_transform(name, translate_transform);
+    }
+    else if (command_string == "scale") {
+      std::string name;
 
-    apply_transform_on_mass_centre(name, rotate_transform);
-  } else if (command_string == "rotate_at") {
-    std::string name;
+      std::string sx_string;
+      std::string sy_string;
+      std::string sz_string;
 
-    std::string rotation_centre_x_string;
-    std::string rotation_centre_y_string;
+      entrie_stream >> name >> sx_string >> sy_string >> sz_string;
 
-    std::string rad_string;
+      double sx = std::stod(sx_string);
+      double sy = std::stod(sy_string);
+      double sz = std::stod(sz_string);
 
-    entrie_stream >> name >> rotation_centre_x_string >>
-        rotation_centre_y_string >> rad_string;
+      auto scale_transform = cool_gl::create_scale_transform(sx, sy, sz);
 
-    double rotation_centre_x = std::stod(rotation_centre_x_string);
-    double rotation_centre_y = std::stod(rotation_centre_y_string);
+      apply_transform_on_mass_centre(name, scale_transform);
+    }
+    else if (command_string == "rotate") {
+      std::string name;
 
-    auto translate_to_rotation_centre = cool_gl::create_translate_transform(
-        -1 * rotation_centre_x, -1 * rotation_centre_y, 0.0);
+      std::string rad_string;
 
-    auto translate_from_rotation_centre = cool_gl::create_translate_transform(
-        rotation_centre_x, rotation_centre_y, 0.0);
+      entrie_stream >> name >> rad_string;
 
-    double rad = std::stod(rad_string);
+      double rad = std::stod(rad_string);
 
-    auto rotate_transform = cool_gl::create_rotate_transform(rad);
+      auto rotate_transform = cool_gl::create_rotate_transform(rad);
 
-    auto final_transform =
-        cool_gl::multiply(translate_to_rotation_centre, rotate_transform);
+      apply_transform_on_mass_centre(name, rotate_transform);
+    }
+    else if (command_string == "rotate_at") {
+      std::string name;
 
-    final_transform =
-        cool_gl::multiply(final_transform, translate_from_rotation_centre);
+      std::string rotation_centre_x_string;
+      std::string rotation_centre_y_string;
 
-    apply_transform(name, final_transform);
+      std::string rad_string;
 
-  } else if (command_string == "clip_line_cohen_sutherland") {
-    cool_gl::line_clipping_type = cool_gl::LineClippingType::cohen_sutherland;
-  } else if (command_string == "clip_line_liang_barsky") {
-    cool_gl::line_clipping_type = cool_gl::LineClippingType::liang_barsky;
-  }
+      entrie_stream >> name >> rotation_centre_x_string >>
+          rotation_centre_y_string >> rad_string;
+
+      double rotation_centre_x = std::stod(rotation_centre_x_string);
+      double rotation_centre_y = std::stod(rotation_centre_y_string);
+
+      auto translate_to_rotation_centre = cool_gl::create_translate_transform(
+          -1 * rotation_centre_x, -1 * rotation_centre_y, 0.0);
+
+      auto translate_from_rotation_centre = cool_gl::create_translate_transform(
+          rotation_centre_x, rotation_centre_y, 0.0);
+
+      double rad = std::stod(rad_string);
+
+      auto rotate_transform = cool_gl::create_rotate_transform(rad);
+
+      auto final_transform =
+          cool_gl::multiply(translate_to_rotation_centre, rotate_transform);
+
+      final_transform =
+          cool_gl::multiply(final_transform, translate_from_rotation_centre);
+
+      apply_transform(name, final_transform);
+    }
+    else if (command_string == "clip_line_cohen_sutherland") {
+      cool_gl::line_clipping_type = cool_gl::LineClippingType::cohen_sutherland;
+    }
+    else if (command_string == "clip_line_liang_barsky") {
+      cool_gl::line_clipping_type = cool_gl::LineClippingType::liang_barsky;
+    }
     else {
     output_stream
         << "Please enter a valid command! Enter help to see valid commands."

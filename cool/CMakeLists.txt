@@ -49,7 +49,7 @@ set(sources
 
 add_executable(${target_name} ${sources})
 
-target_compile_features(${target_name} PRIVATE cxx_std_17)
+# target_compile_features(${target_name} PRIVATE cxx_std_17)
 
 add_dependencies(${target_name} glade_file)
 
