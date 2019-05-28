@@ -368,6 +368,58 @@ void CoolApp::cool_main_entry_button_clicked() {
     auto row = *object_list->append();
     row[my_columns.column_type] = display_file.back()->type();
     row[my_columns.column_name] = display_file.back()->name();
+  } else if (command_string == "curve") {
+    std::string name;
+    std::vector<cool_gl::Line> result;
+    std::vector<double> control_x;
+    std::vector<double> control_y;
+
+    std::string x_begin_string;
+    std::string y_begin_string;
+
+    std::string x_end_string;
+    std::string y_end_string;
+
+    std::string x_control_begin_string;
+    std::string x_control_end_string;
+
+    std::string y_control_begin_string;
+    std::string y_control_end_string;
+
+
+    entrie_stream >> name >> x_begin_string >> y_begin_string >> x_end_string >>
+        y_end_string >> x_control_begin_string >> x_control_end_string >> y_control_begin_string >> y_control_end_string;
+
+    double x_begin = std::stod(x_begin_string);
+    double y_begin = std::stod(y_begin_string);
+    double x_end = std::stod(x_end_string);
+    double y_end = std::stod(y_end_string);
+
+    double x_begin_control = std::stod(x_control_begin_string);
+    double x_end_control = std::stod(x_control_end_string);
+    double y_begin_control = std::stod(y_control_begin_string);
+    double y_end_control = std::stod(y_control_end_string);
+
+    auto begin = cool_gl::Vec{x_begin, y_begin, 1.0};
+    auto end = cool_gl::Vec{x_end, y_end, 1.0};
+
+    output_stream << "Create: " << command_string << std::endl
+                  << "\tname: " << name << std::endl;
+    output_stream << "\tpoint begin and end: ";
+    output_stream << "(" << x_begin << ", " << y_begin << ") ";
+    output_stream << "(" << x_end << ", " << y_end << ") ";
+    output_stream << std::endl;
+
+    control_x = { x_begin, x_begin_control, x_end_control, x_end };
+    control_y = { y_begin, y_begin_control, y_end_control, y_end };
+
+    display_file.emplace_back(
+        new cool_gl::Curve{std::move(control_x), std::move(control_y),
+                          cool_gl::Colour{0.0, 0.0, 0.0}, std::move(name)});
+
+    auto row = *object_list->append();
+    row[my_columns.column_type] = display_file.back()->type();
+    row[my_columns.column_name] = display_file.back()->name();
   } else if (command_string == "polygon") {
     std::string name;
 

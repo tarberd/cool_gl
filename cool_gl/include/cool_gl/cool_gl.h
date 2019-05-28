@@ -8,3 +8,4 @@
 #include "Polygon.h"
 #include "Vec.h"
 #include "Window.h"
+#include "Curve.h"
