@@ -88,9 +88,10 @@ WavefrontObj make_polygon_from_obj(std::istream &input) noexcept {
   auto formated_input = std::string{};
 
   while (input >> formated_input) {
-    if (formated_input[0] == '#') {
+    std::cout << formated_input << std::endl;
+    if (formated_input.compare("#") < 0) {
       input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    } else if (formated_input[0] == 'v') {
+    } else if (formated_input.compare("v") == 0) {
       double x;
       double y;
       double z;
@@ -100,7 +101,7 @@ WavefrontObj make_polygon_from_obj(std::istream &input) noexcept {
       vertex_data.emplace_back(x, y, z);
 
       input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    } else if (formated_input[0] == 'f') {
+    } else if (formated_input.compare("f") == 0) {
       std::string first_index;
       std::string middle_index;
       std::string last_index;
@@ -113,9 +114,15 @@ WavefrontObj make_polygon_from_obj(std::istream &input) noexcept {
 
       faces.emplace_back(std::stoi(first_index), std::stoi(middle_index),
                          std::stoi(last_index));
-    } else if (formated_input[0] == 'g') {
+    } else if (formated_input.compare("g") == 0) {
       input >> name;
+    } else {
+      input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+  }
+
+  for (auto &vertex : vertex_data) {
+    std::cout << vertex << std::endl;
   }
 
   return WavefrontObj{std::move(vertex_data), std::move(faces),

@@ -45,6 +45,9 @@ add_custom_target(obj_files ALL
     COMMAND ${CMAKE_COMMAND} -E copy
     ${PROJECT_SOURCE_DIR}/data/cube.obj
     ${PROJECT_BINARY_DIR}/cube.obj
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_SOURCE_DIR}/data/subzero.obj
+    ${PROJECT_BINARY_DIR}/subzero.obj
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 
