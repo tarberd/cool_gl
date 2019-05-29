@@ -65,7 +65,21 @@ void WavefrontObj::transform(const Matrix &transform) noexcept {
 }
 
 Vec WavefrontObj::mass_centre() noexcept {
-  return Vec{0.0, 0.0, 0.0};
+  double x_sum = 0.0;
+  double y_sum = 0.0;
+  double z_sum = 0.0;
+
+  for (const auto &point : vertex_data) {
+    x_sum += point.x;
+    y_sum += point.y;
+    z_sum += point.z;
+  }
+
+  x_sum /= vertex_data.size();
+  y_sum /= vertex_data.size();
+  z_sum /= vertex_data.size();
+
+  return Vec{x_sum, y_sum, z_sum};
 }
 
 std::string WavefrontObj::type() const noexcept { return "WavefrontObj"; }
@@ -126,7 +140,7 @@ WavefrontObj make_polygon_from_obj(std::istream &input) noexcept {
   }
 
   return WavefrontObj{std::move(vertex_data), std::move(faces),
-                      Colour{0.5, 0.5, 0.5}, std::move(name)};
+                      Colour{0.0, 0.0, 1.0}, std::move(name)};
 }
 
 } // namespace cool_gl
